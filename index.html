@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOYO USHIKU SSH — 東洋大学附属牛久中学校・高等学校 スーパーサイエンスハイスクール特設サイト</title>
+<meta name="description" content="東洋大学附属牛久中学校・高等学校 SSH（スーパーサイエンスハイスクール）特設サイト。令和8年度〜 文理融合基礎枠指定校。">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="TOYO USHIKU SSH">
+<meta property="og:title" content="TOYO USHIKU SSH — 東洋大学附属牛久中学校・高等学校 スーパーサイエンスハイスクール特設サイト">
+<meta property="og:description" content="哲学的思考を基盤とした『総合知×データサイエンス』融合プログラム。令和8年度〜 文理融合基礎枠指定校。">
+<meta property="og:image" content="assets/hero-enryo.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TOYO USHIKU SSH — スーパーサイエンスハイスクール特設サイト">
+<meta name="twitter:description" content="哲学的思考を基盤とした『総合知×データサイエンス』融合プログラム。令和8年度〜 文理融合基礎枠指定校。">
+<meta name="twitter:image" content="assets/hero-enryo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500;700;900&family=Zen+Old+Mincho:wght@400;600;900&family=Plus+Jakarta+Sans:wght@700;800&family=Fragment+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="goo">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+      <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+    </filter>
+  </defs>
+</svg>
+
+<div class="intro" id="introOverlay">
+  <div class="intro-photos">
+    <img src="assets/hero-enryo.jpg" alt="">
+    <img src="assets/gallery-lab.jpg" alt="">
+    <img src="assets/intro-classroom.jpg" alt="">
+    <img src="assets/gallery-hall.jpg" alt="">
+    <img src="assets/gallery-group.jpg" alt="">
+    <img src="assets/intro-discussion.jpg" alt="">
+    <img src="assets/gallery-event.jpg" alt="">
+    <img src="assets/announce-enryo.jpg" alt="">
+  </div>
+  <div class="intro-tint"></div>
+  <div class="intro-goo" aria-hidden="true">
+    <span class="goo-blob"></span>
+    <span class="goo-blob"></span>
+    <span class="goo-blob"></span>
+    <span class="goo-blob"></span>
+    <span class="goo-blob"></span>
+    <span class="goo-blob"></span>
+  </div>
+  <div class="intro-mark" aria-hidden="true"><span>S</span><span>S</span><span>H</span></div>
+  <div class="intro-text">
+    <p class="intro-eyebrow">SUPER SCIENCE HIGH SCHOOL</p>
+    <h1 class="intro-title" aria-label="TOYO USHIKU">
+      <span class="intro-letters"><span>T</span><span>O</span><span>Y</span><span>O</span><span class="intro-gap"></span><span>U</span><span>S</span><span>H</span><span>I</span><span>K</span><span>U</span></span>
+    </h1>
+    <p class="intro-sub">SSH 特設サイト</p>
+  </div>
+  <button class="intro-skip" id="introSkip" type="button">SKIP ↦</button>
+  <div class="intro-progress" id="introProgress"></div>
+</div>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="progress-bar" aria-hidden="true"><span id="progressFill"></span></div>
+
+<header class="site-header" id="siteHeader">
+  <a class="brand" href="#top">
+    <span class="brand-mark">SSH</span>
+    <span class="brand-name">東洋大学附属牛久中学校・高等学校</span>
+  </a>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navOverlay">
+    <span class="menu-btn-label">MENU</span>
+    <span class="menu-icon"><i></i><i></i></span>
+  </button>
+</header>
+
+<nav class="nav-overlay" id="navOverlay">
+  <div class="nav-overlay-inner">
+    <ol class="nav-list">
+      <li><a href="#top" data-nav-close>ホーム<span>Home</span></a></li>
+      <li><a href="https://sites.google.com/toyo.jp/test2026ssh/運営指導委員会" target="_blank" rel="noopener">運営指導委員会<span>Steering Committee</span></a></li>
+      <li><a href="https://sites.google.com/toyo.jp/test2026ssh/東洋大牛久の目指す探究教育" target="_blank" rel="noopener">東洋大牛久の目指す探究教育<span>Inquiry Education</span></a></li>
+      <li><a href="https://sites.google.com/toyo.jp/test2026ssh/frontier-boost-program" target="_blank" rel="noopener">FRONTIER BOOST PROGRAM<span>Frontier Boost</span></a></li>
+      <li><a href="https://sites.google.com/toyo.jp/test2026ssh/ssh成果物" target="_blank" rel="noopener">SSH成果物<span>Achievements</span></a></li>
+      <li><a href="https://sites.google.com/toyo.jp/test2026ssh/探究活動の様々な取り組み" target="_blank" rel="noopener">探究活動の様々な取り組み<span>Inquiry Activities</span></a></li>
+      <li><a href="https://sites.google.com/toyo.jp/test2026ssh/ssh普及発信活動" target="_blank" rel="noopener">SSH普及・発信活動<span>Outreach</span></a></li>
+      <li><a href="https://sites.google.com/toyo.jp/test2026ssh/研究開発実施報告書" target="_blank" rel="noopener">研究開発実施報告書<span>Research Reports</span></a></li>
+      <li><a href="https://sites.google.com/toyo.jp/test2026ssh/ssh先進校視察及び視察の受け入れ" target="_blank" rel="noopener">SSH先進校視察・受け入れ<span>School Visits</span></a></li>
+      <li><a href="https://sites.google.com/toyo.jp/test2026ssh/ssh通信logos-ushiku" target="_blank" rel="noopener">SSH通信「LOGOS Ushiku」<span>Newsletter</span></a></li>
+    </ol>
+    <div class="nav-overlay-footer">
+      <a href="https://sites.google.com/toyo.jp/test2026ssh/ホーム" target="_blank" rel="noopener">公式サイト（Google Sites）を開く ↗</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <img src="assets/hero-enryo.jpg" alt="井上円了像（東洋大学創立者）と東洋大学附属牛久中学校・高等学校キャンパス">
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow reveal-line"><span>SUPER SCIENCE HIGH SCHOOL</span></p>
+      <h1 class="hero-title">
+        <span class="line"><span class="mask"><span class="reveal-char">TOYO USHIKU</span></span></span>
+        <span class="line"><span class="mask"><span class="reveal-char accent">SSH 特設サイト</span></span></span>
+      </h1>
+      <p class="hero-badge reveal-line"><span>令和8年度〜　スーパーサイエンスハイスクール指定校　文理融合基礎枠</span></p>
+    </div>
+    <div class="hero-scroll" aria-hidden="true">
+      <span class="hero-scroll-line"></span>
+      <span class="hero-scroll-label">SCROLL</span>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee">
+    <div class="marquee-track">
+      <span>SUPER SCIENCE HIGH SCHOOL</span><span>文理融合基礎枠</span><span>哲学 × 総合知 × データサイエンス</span><span>TOYO UNIV. USHIKU JUNIOR &amp; SENIOR HIGH SCHOOL</span>
+      <span>SUPER SCIENCE HIGH SCHOOL</span><span>文理融合基礎枠</span><span>哲学 × 総合知 × データサイエンス</span><span>TOYO UNIV. USHIKU JUNIOR &amp; SENIOR HIGH SCHOOL</span>
+    </div>
+  </div>
+
+  <!-- 01 ANNOUNCEMENT -->
+  <section class="section announce">
+    <div class="section-head reveal">
+      <span class="section-index">01 / ANNOUNCEMENT</span>
+    </div>
+    <div class="announce-grid">
+      <h2 class="announce-title reveal">
+        文部科学省より<br>
+        <span class="accent">スーパーサイエンスハイスクール</span><br>
+        （SSH）の指定を受けました。
+      </h2>
+      <div class="announce-body reveal">
+        <p>東洋大学附属牛久中学校・高等学校は、文部科学省よりスーパーサイエンスハイスクール（SSH）の指定を受けました。本校の研究課題は「哲学的思考を基盤とした『総合知×データサイエンス』融合プログラムの開発」です。</p>
+        <p>東洋大学の伝統である「哲学」を教育の核に据え、全校で「哲学シンキング」を展開。本質的な問いを立てる力を磨きます。そこに最新の「データサイエンス」を掛け合わせ、ICTやAIを駆使した客観的な実証力を身につけます。</p>
+        <p>さらに地域課題の解決やグローバルな発信を通じ、文理の枠を超えて未来を切り拓く「総合知」を備えた人材を育成します。科学と哲学の対話から、新しい価値を創造する学びがここから始まります。</p>
+      </div>
+    </div>
+    <div class="announce-photo reveal">
+      <img src="assets/announce-aerial.jpg" alt="東洋大学附属牛久中学校・高等学校 グラウンド空撮">
+    </div>
+    <div class="announce-overview reveal">
+      <img src="assets/announce-overview.jpg" alt="スーパーサイエンスハイスクール事業 取組概要（哲学的思考を基盤とした「総合知×データサイエンス」融合プログラムの開発）">
+    </div>
+  </section>
+
+  <!-- 02 CONCEPT -->
+  <section class="section concept">
+    <canvas class="concept-graph" id="conceptGraph" aria-hidden="true"></canvas>
+    <span class="concept-graph-label" aria-hidden="true">PHILOSOPHY × DATA</span>
+    <div class="section-head reveal">
+      <span class="section-index dark">02 / CONCEPT</span>
+    </div>
+    <p class="concept-lead reveal">研究主題</p>
+    <h2 class="concept-title">
+      <span class="reveal-word">哲学的思考</span><span class="reveal-word">を基盤とした</span><br>
+      <span class="accent-line"><span class="reveal-word accent">「総合知</span><span class="reveal-word accent">×</span><span class="reveal-word accent">データサイエンス」</span><span class="reveal-word">融合プログラム</span><span class="reveal-word">の開発</span></span>
+    </h2>
+    <div class="concept-flex">
+      <img class="concept-emblem reveal" src="assets/concept-emblem.png" alt="総合知×データサイエンス TOYO UNIV USHIKU エンブレム">
+      <div class="concept-body reveal">
+        <p>東洋大学の「総合知」を核に、吉田幸司氏提唱の哲学シンキングとデータ・ＡＩ活用を融合した文理融合プログラムを展開し、生徒の問いを立てる力と科学的解決能力を育成する。</p>
+        <p>これにより、人文社会科学的テーマを科学的視点で深く「読み解く力」を養い、地域から地球規模の課題解決に挑戦し、未来を切り拓く人材を育成する。</p>
+      </div>
+    </div>
+    <figure class="concept-figure reveal">
+      <img src="assets/concept-triangle.jpg" alt="TOYO USHIKU 文理融合SSHモデル図：哲学シンキング・Data Science・グローバル教育の三要素が「総合知」を中心に循環する概念図">
+      <figcaption>総合知トライアングル ― 哲学シンキング × Data Science × グローバル教育</figcaption>
+    </figure>
+  </section>
+
+  <!-- 03 PROGRAMS -->
+  <section class="section programs">
+    <div class="section-head reveal">
+      <span class="section-index">03 / PROGRAMS</span>
+      <h2 class="section-title">コンテンツ一覧</h2>
+    </div>
+    <div class="program-grid">
+      <a class="program-card reveal" href="https://sites.google.com/toyo.jp/test2026ssh/ホーム?authuser=0" target="_blank" rel="noopener">
+        <span class="program-num">［01］</span>
+        <span class="program-name">はじめに</span>
+        <p class="program-desc">SSH特設サイト(Google Sites)の<br>トップページ</p>
+        <span class="program-arrow">↗</span>
+      </a>
+      <a class="program-card reveal" href="https://sites.google.com/toyo.jp/test2026ssh/東洋大牛久の目指す探究教育" target="_blank" rel="noopener">
+        <span class="program-num">［02］</span>
+        <span class="program-name">東洋大牛久の目指す<br>探究教育</span>
+        <p class="program-desc">本校が掲げる探究教育の全体像とビジョン</p>
+        <span class="program-arrow">↗</span>
+      </a>
+      <a class="program-card reveal" href="https://sites.google.com/toyo.jp/test2026ssh/frontier-boost-program" target="_blank" rel="noopener">
+        <span class="program-num">［03］</span>
+        <span class="program-name">FRONTIER BOOST<br>PROGRAM</span>
+        <p class="program-desc">文理融合基礎枠 独自の学び推進プログラム</p>
+        <span class="program-arrow">↗</span>
+      </a>
+      <a class="program-card reveal" href="https://sites.google.com/toyo.jp/test2026ssh/ssh成果物" target="_blank" rel="noopener">
+        <span class="program-num">［04］</span>
+        <span class="program-name">SSH成果物</span>
+        <p class="program-desc">生徒による研究・探究活動の成果一覧</p>
+        <span class="program-arrow">↗</span>
+      </a>
+      <a class="program-card reveal" href="https://sites.google.com/toyo.jp/test2026ssh/探究活動の様々な取り組み" target="_blank" rel="noopener">
+        <span class="program-num">［05］</span>
+        <span class="program-name">探究活動の<br>様々な取り組み</span>
+        <p class="program-desc">学年・教科をこえた探究活動の記録</p>
+        <span class="program-arrow">↗</span>
+      </a>
+      <a class="program-card reveal" href="https://sites.google.com/toyo.jp/test2026ssh/ssh普及発信活動" target="_blank" rel="noopener">
+        <span class="program-num">［06］</span>
+        <span class="program-name">SSH普及・発信活動</span>
+        <p class="program-desc">地域・社会への成果発信と普及の取り組み</p>
+        <span class="program-arrow">↗</span>
+      </a>
+      <a class="program-card reveal" href="https://sites.google.com/toyo.jp/test2026ssh/研究開発実施報告書" target="_blank" rel="noopener">
+        <span class="program-num">［07］</span>
+        <span class="program-name">研究開発実施報告書</span>
+        <p class="program-desc">文部科学省への年次研究開発報告書</p>
+        <span class="program-arrow">↗</span>
+      </a>
+      <a class="program-card reveal" href="https://sites.google.com/toyo.jp/test2026ssh/運営指導委員会" target="_blank" rel="noopener">
+        <span class="program-num">［08］</span>
+        <span class="program-name">運営指導委員会</span>
+        <p class="program-desc">外部有識者による指導・助言の記録</p>
+        <span class="program-arrow">↗</span>
+      </a>
+      <a class="program-card reveal" href="https://sites.google.com/toyo.jp/test2026ssh/ssh先進校視察及び視察の受け入れ" target="_blank" rel="noopener">
+        <span class="program-num">［09］</span>
+        <span class="program-name">SSH先進校視察・<br>受け入れ</span>
+        <p class="program-desc">他校との視察交流・受け入れ実績</p>
+        <span class="program-arrow">↗</span>
+      </a>
+      <a class="program-card reveal" href="https://sites.google.com/toyo.jp/test2026ssh/ssh通信logos-ushiku" target="_blank" rel="noopener">
+        <span class="program-num">［10］</span>
+        <span class="program-name">SSH通信<br>「LOGOS Ushiku」</span>
+        <p class="program-desc">SSHの日々の活動を届けるニュースレター</p>
+        <span class="program-arrow">↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 04 GALLERY -->
+  <section class="section gallery">
+    <div class="section-head reveal">
+      <span class="section-index">04 / CAMPUS</span>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal span-2">
+        <img src="assets/gallery-ssh512.jpg" alt="SSH活動の様子(実験・野外調査・発表・研究発表会)" loading="lazy">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="assets/gallery-asaka.jpg" alt="東洋大学生命科学部(朝霞キャンパス)での実験講座" loading="lazy">
+      </div>
+      <div class="gallery-item reveal span-2">
+        <img src="assets/gallery-hall.jpg" alt="講演会の様子" loading="lazy">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="assets/gallery-sdgs.jpg" alt="SDGｓ全国ユース環境活動発表大会に参加した生徒たち" loading="lazy">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="assets/gallery-sdgsposter.jpg" alt="研究発表会でポスターを発表する生徒たち" loading="lazy">
+      </div>
+      <div class="gallery-item reveal span-2">
+        <img src="assets/gallery-cad.jpg" alt="CAD実習に取り組む生徒たち" loading="lazy">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="assets/gallery-biolab.jpg" alt="理科実験室でのグループ実習" loading="lazy">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="assets/gallery-robocup.jpg" alt="ロボット競技会に出場した生徒たち" loading="lazy">
+      </div>
+      <div class="gallery-item reveal span-2">
+        <img src="assets/gallery-soybean.jpg" alt="大豆栽培の研究に取り組む生徒たち" loading="lazy">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="assets/gallery-chemdemo.jpg" alt="化学実験デモンストレーションに取り組む生徒" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 MESSAGE -->
+  <section class="section message">
+    <div class="section-head reveal">
+      <span class="section-index dark">05 / MESSAGE</span>
+    </div>
+    <div class="message-grid">
+      <div class="message-quote reveal">
+        <span class="quote-mark" aria-hidden="true">“</span>
+        <p>２０２６年度から５年間、本校は、文部科学省より「スーパーサイエンス・ハイスクール（文理融合基礎枠）」の指定を受けました。</p>
+        <p class="message-pull reveal">「なぜ、なぜ、なぜ。」</p>
+        <p>研究主題は「哲学的思考を基盤とした『総合知×データサイエンス』融合プログラムの開発」です。これからの「生成AI時代」を生き抜くことが私たちに問われています。このために、デジタル技術を使いこなして、全ての生徒が「なぜ、なぜ、なぜ」の哲学教育を基礎に探究する姿勢を育み、学びの最適解を探る手法として、「問いを立てる力」を育てていきます。</p>
+        <p>「スーパーサイエンス・ハイスクール」といっても、本校が理系に特化・専門になったわけではなく、文理融合型のSSHですから、文系からの疑問を理系が解き明かす、あるいは理系から出てきた結果を文系が総合して解答をまとめ、思考を展開することが重要です。様々な入口はあります。「なぜ、なぜ、なぜ」からどのような思考を展開していくかが問われています。</p>
+      </div>
+      <div class="message-meta reveal">
+        <img class="message-photo" src="assets/principal.jpg" alt="校長 金澤利明">
+        <p class="message-role">校長</p>
+        <p class="message-name">金澤 利明</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 SNS -->
+  <section class="section sns">
+    <div class="section-head reveal">
+      <span class="section-index">06 / CONNECT</span>
+      <h2 class="section-title">公式SNS</h2>
+    </div>
+    <div class="sns-grid">
+      <div class="sns-card reveal">
+        <div class="sns-card-head">
+          <span class="sns-card-name">Instagram</span>
+          <a class="sns-card-link" href="https://www.instagram.com/toyo_ushiku_official/?hl=ja" target="_blank" rel="noopener">@toyo_ushiku_official ↗</a>
+        </div>
+        <div class="sns-stats-block">
+          <div class="sns-stat"><span class="sns-stat-num">4,073</span><span class="sns-stat-label">フォロワー</span></div>
+          <div class="sns-stat"><span class="sns-stat-num">830</span><span class="sns-stat-label">投稿</span></div>
+          <p class="sns-stats-note">学校内外の活動報告・告知を中心に発信しています。</p>
+          <a class="sns-cta" href="https://www.instagram.com/toyo_ushiku_official/?hl=ja" target="_blank" rel="noopener">Instagramを見る ↗</a>
+        </div>
+      </div>
+      <div class="sns-card reveal">
+        <div class="sns-card-head">
+          <span class="sns-card-name">X</span>
+          <a class="sns-card-link" href="https://x.com/toyo_ushiku2023" target="_blank" rel="noopener">@toyo_ushiku2023 ↗</a>
+        </div>
+        <div class="sns-stats-block">
+          <div class="sns-stat"><span class="sns-stat-num">404</span><span class="sns-stat-label">フォロワー</span></div>
+          <div class="sns-stat"><span class="sns-stat-num">372</span><span class="sns-stat-label">投稿</span></div>
+          <p class="sns-stats-note">行事・活動の速報や学校からのお知らせを発信しています。</p>
+          <a class="sns-cta" href="https://x.com/toyo_ushiku2023" target="_blank" rel="noopener">Xを見る ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta">
+    <a class="cta-link reveal" href="https://www.toyo.ac.jp/ushiku/" target="_blank" rel="noopener">
+      <span class="cta-text">東洋大学附属牛久中学校・高等学校 TOPへ</span>
+      <span class="cta-circle">↗</span>
+    </a>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <img class="footer-crest" src="assets/school-crest.png" alt="東洋大学附属牛久中学校・高等学校 校章" width="300" height="291" loading="lazy">
+      <div>
+        <p class="footer-brand-title">TOYO UNIV. USHIKU</p>
+        <p class="footer-brand-sub">東洋大学附属牛久中学校・高等学校<br>スーパーサイエンスハイスクール特設サイト</p>
+      </div>
+    </div>
+    <nav class="footer-nav">
+      <a href="https://sites.google.com/toyo.jp/test2026ssh/ホーム" target="_blank" rel="noopener">ホーム</a>
+      <a href="https://sites.google.com/toyo.jp/test2026ssh/運営指導委員会" target="_blank" rel="noopener">運営指導委員会</a>
+      <a href="https://sites.google.com/toyo.jp/test2026ssh/東洋大牛久の目指す探究教育" target="_blank" rel="noopener">探究教育</a>
+      <a href="https://sites.google.com/toyo.jp/test2026ssh/frontier-boost-program" target="_blank" rel="noopener">FRONTIER BOOST PROGRAM</a>
+      <a href="https://sites.google.com/toyo.jp/test2026ssh/ssh通信logos-ushiku" target="_blank" rel="noopener">SSH通信</a>
+    </nav>
+    <div class="footer-sns">
+      <a href="https://www.instagram.com/toyo_ushiku_official/?hl=ja" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://x.com/toyo_ushiku2023" target="_blank" rel="noopener">X</a>
+      <a href="https://www.toyo.ac.jp/ushiku/" target="_blank" rel="noopener">公式HP</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>TOYO UNIV USHIKU｜webmaster@toyo-ushiku.ed.jp｜029-872-0350</p>
+    <p>&copy; 2026 学校法人 東洋大学 東洋大学附属牛久中学校・高等学校</p>
+  </div>
+</footer>
+
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
