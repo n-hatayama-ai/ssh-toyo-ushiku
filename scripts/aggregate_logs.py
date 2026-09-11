@@ -10,10 +10,20 @@ GitHub Actions の各ステップが環境変数で結果を渡す想定:
 
 CALENDAR / DEADLINE も同様のプレフィックスを使う。
 
-標準ライブラリのみ（json / os / sys / datetime）で動作し、Python 3.9 以上を想定。
+標準ライブラリのみ（json / math / os / sys / datetime）で動作し、Python 3.9 以上を想定。
+
+タイムゾーン方針:
+  - ``timestamp`` / ``meta.last_updated`` は UTC（末尾 Z）。機械可読で曖昧さがない。
+  - ``date`` は **実行環境のローカル日付**（JST 運用前提）。
+    UTC 日付にすると JST 朝 8 時の定時実行が UTC では前日 23 時になり、
+    同じ JST の日に再実行（JST 10 時 = UTC 当日 1 時）したときに date が
+    ずれて重複排除が効かず、mail-check が 2 件並んでしまうため。
+    GitHub Actions の runner は既定で UTC なので、ワークフロー側で
+    ``env: TZ: Asia/Tokyo`` を設定すること。
 """
 
 import json
+import math
 import os
 import sys
 from datetime import datetime, timezone
@@ -47,17 +57,29 @@ def env_value(name):
 
 
 def parse_duration(raw):
-    """duration を float に変換する。数値でなければ None。"""
+    """duration を float に変換する。数値でなければ None。
+
+    nan / inf は JSON の仕様上表現できない（Python は NaN / Infinity という
+    非標準のリテラルを書き出してしまい、JSON.parse などが失敗する）ため
+    弾いて None にする。
+    """
     if raw is None:
         return None
     try:
-        return float(raw)
+        result = float(raw)
     except ValueError:
         print(
             "warning: duration が数値ではないため無視します: {!r}".format(raw),
             file=sys.stderr,
         )
         return None
+    if not math.isfinite(result):
+        print(
+            "warning: duration が有限の数値ではないため無視します: {!r}".format(raw),
+            file=sys.stderr,
+        )
+        return None
+    return result
 
 
 def new_document():
@@ -119,9 +141,20 @@ def backup_corrupt_file(path):
         print("warning: 退避に失敗しました（{}）。".format(exc), file=sys.stderr)
 
 
+def local_date(now):
+    """ログの ``date`` に使うローカル日付（既定は実行環境の TZ、運用上は JST）。
+
+    ``timestamp`` は UTC のままにして、日付キーだけ人間の感覚（JST の 1 日）に
+    合わせる。こうしないと JST 08:00（UTC 前日 23:00）の定時実行と
+    JST 10:00（UTC 当日 01:00）の手動再実行で date が別日になり、
+    「同一日付なら前回の結果を置き換える」という仕様が破れる。
+    """
+    return now.astimezone().strftime("%Y-%m-%d")
+
+
 def build_entries(now):
     """環境変数から 3 スクリプト分のログエントリを作る。"""
-    today = now.strftime("%Y-%m-%d")
+    today = local_date(now)
     timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     entries = []
@@ -167,10 +200,11 @@ def write_document(path, document):
         if directory:
             os.makedirs(directory, exist_ok=True)
         with open(tmp_path, "w", encoding="utf-8") as handle:
-            json.dump(document, handle, indent=2, ensure_ascii=False)
+            # allow_nan=False: NaN / Infinity は JSON として不正なので書き出さない
+            json.dump(document, handle, indent=2, ensure_ascii=False, allow_nan=False)
             handle.write("\n")
         os.replace(tmp_path, path)
-    except OSError as exc:
+    except (OSError, ValueError) as exc:
         print("error: {} の書き込みに失敗しました: {}".format(path, exc), file=sys.stderr)
         try:
             if os.path.exists(tmp_path):
@@ -184,7 +218,7 @@ def write_document(path, document):
 def main():
     path = log_path()
     now = datetime.now(timezone.utc)
-    today = now.strftime("%Y-%m-%d")
+    today = local_date(now)
 
     document = load_document(path)
     entries = build_entries(now)
