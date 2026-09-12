@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>noboru 日次実行ダッシュボード</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #0f1419;
+      color: #e0e0e0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #333;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      background: #1a1f26;
+      border-radius: 6px;
+      border: 1px solid #333;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.ok {
+      background: #4ade80;
+    }
+
+    .status-dot.error {
+      background: #ef4444;
+    }
+
+    .status-dot.pending {
+      background: #eab308;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .last-updated {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .logs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .log-entry {
+      background: #1a1f26;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .log-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+    }
+
+    .log-date {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .log-timestamp {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .scripts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .script-card {
+      background: #0f1419;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 15px;
+    }
+
+    .script-name {
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .script-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .script-status.ok {
+      background: rgba(74, 222, 128, 0.1);
+      color: #4ade80;
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+
+    .script-status.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .script-message {
+      font-size: 13px;
+      color: #b0b0b0;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .script-duration {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .script-error {
+      font-size: 12px;
+      color: #f87171;
+      margin-top: 8px;
+      padding: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 4px;
+      border-left: 3px solid #ef4444;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+    }
+
+    .error-banner {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 20px;
+      color: #f87171;
+    }
+
+    .refresh-info {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 noboru 日次実行ダッシュボード</h1>
+      <div>
+        <div class="status-indicator">
+          <span class="status-dot pending" id="statusDot"></span>
+          <div>
+            <div style="font-weight: 600; font-size: 14px;" id="statusText">読み込み中...</div>
+            <div class="last-updated" id="lastUpdated"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="errorBanner" class="error-banner" style="display: none;"></div>
+    <div id="logsContainer" class="logs-container">
+      <div class="loading">ログを読み込み中...</div>
+    </div>
+
+    <div class="refresh-info">
+      🔄 5分ごとに自動リフレッシュされます（最後の更新: <span id="autoRefreshTime">--:--:--</span>）
+    </div>
+  </div>
+
+  <script>
+    const LOG_FILE = './execution-log.json';
+    const REFRESH_INTERVAL = 5 * 60 * 1000; // 5分
+
+    async function loadLogs() {
+      try {
+        const response = await fetch(LOG_FILE);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        renderLogs(data);
+        updateStatus('ok');
+        updateLastUpdatedTime();
+      } catch (error) {
+        console.error('ログ読み込みエラー:', error);
+        showError(`ログを読み込めません: ${error.message}`);
+        updateStatus('error');
+      }
+    }
+
+    function renderLogs(data) {
+      const container = document.getElementById('logsContainer');
+      const errorBanner = document.getElementById('errorBanner');
+      errorBanner.style.display = 'none';
+
+      if (!data.logs || data.logs.length === 0) {
+        container.innerHTML = '<div class="empty-state">まだ実行ログがありません</div>';
+        return;
+      }
+
+      const html = data.logs.map(log => {
+        const scripts = log.scripts || [];
+        const hasError = scripts.some(s => s.status === 'error');
+
+        return `
+          <div class="log-entry">
+            <div class="log-entry-header">
+              <div>
+                <div class="log-date">📅 ${log.date}</div>
+                <div class="log-timestamp">${log.timestamp}</div>
+              </div>
+              ${log.summary ? `<div style="font-size: 13px; color: #999;">${escapeHtml(log.summary)}</div>` : ''}
+            </div>
+            <div class="scripts-grid">
+              ${scripts.map(script => `
+                <div class="script-card">
+                  <div class="script-name">
+                    ${script.name}
+                    <span class="script-status ${script.status}">
+                      ${script.status === 'ok' ? '✓ OK' : '✗ ERROR'}
+                    </span>
+                  </div>
+                  ${script.message ? `<div class="script-message">${escapeHtml(script.message)}</div>` : ''}
+                  ${script.duration_sec !== undefined && script.duration_sec !== null ? `<div class="script-duration">⏱️ ${script.duration_sec.toFixed(1)}秒</div>` : ''}
+                  ${script.error ? `<div class="script-error">${escapeHtml(script.error)}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    function showError(message) {
+      const banner = document.getElementById('errorBanner');
+      banner.textContent = '⚠️ ' + message;
+      banner.style.display = 'block';
+    }
+
+    function updateStatus(status) {
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+
+      dot.className = 'status-dot ' + status;
+
+      if (status === 'ok') {
+        text.textContent = '✓ 接続OK';
+      } else if (status === 'error') {
+        text.textContent = '✗ 接続エラー';
+      } else {
+        text.textContent = '◐ 読み込み中...';
+      }
+    }
+
+    function updateLastUpdatedTime() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('ja-JP');
+      document.getElementById('autoRefreshTime').textContent = time;
+      document.getElementById('lastUpdated').textContent = `更新: ${time}`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // 初期読み込み
+    loadLogs();
+
+    // 定期リフレッシュ
+    setInterval(loadLogs, REFRESH_INTERVAL);
+  </script>
+</body>
+</html>
