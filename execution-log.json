@@ -1,6 +1,6 @@
 {
   "meta": {
-    "last_updated": "2026-09-12T10:22:38Z",
+    "last_updated": "2026-09-12T12:00:22Z",
     "project": "noboru",
     "version": 1
   },
@@ -9,16 +9,16 @@
       "date": "2026-09-12",
       "script": "mail-check",
       "status": "ok",
-      "timestamp": "2026-09-12T10:22:38Z",
-      "duration_sec": 1.0,
-      "summary": "2026-09-12 19:22:36 gmail_check: 6件取得 / 要対応1件 / 除外5件   markdown: /home/runner/work/ssh-toyo-ushiku/ssh-toyo-ushiku/メール/成果物/Gmail_要確認事項まとめ_20260912.md   cache   : /home/runner/work/ssh-toyo-ushiku/ssh-",
+      "timestamp": "2026-09-12T12:00:22Z",
+      "duration_sec": 2.0,
+      "summary": "2026-09-12 21:00:19 gmail_check: 6件取得 / 要対応1件 / 除外5件   markdown: /home/runner/work/ssh-toyo-ushiku/ssh-toyo-ushiku/メール/成果物/Gmail_要確認事項まとめ_20260912.md   cache   : /home/runner/work/ssh-toyo-ushiku/ssh-",
       "error_message": null
     },
     {
       "date": "2026-09-12",
       "script": "calendar-check",
       "status": "ok",
-      "timestamp": "2026-09-12T10:22:38Z",
+      "timestamp": "2026-09-12T12:00:22Z",
       "duration_sec": 1.0,
       "summary": "Calendar events saved to /home/runner/work/ssh-toyo-ushiku/ssh-toyo-ushiku/開発/成果物/scripts/calendar_events_raw.json (32 events)",
       "error_message": null
