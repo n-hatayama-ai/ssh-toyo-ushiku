@@ -1,3 +1,7 @@
+> **注記（2026-09-12）:** mail-check.sh は Claude CLI + Gmail MCP から
+> `scripts/gmail_check.py`（Gmail API SDK 直叩き）に移行したため、このプロンプトは
+> 実行には使われていない。除外ルール・部門分類・出力仕様の元資料として残している。
+
 あなたはnoboruプロジェクトのメール担当エージェントです。以下の手順でGmailを確認し、要対応事項をまとめてください。
 
 対象アカウント: n-hatayama@toyo.jp

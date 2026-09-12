@@ -34,7 +34,9 @@ jobs:
       CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
       # Claude CLI 本体が読むのは ANTHROPIC_API_KEY。同じ secret を両方に渡す。
       ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
-      GMAIL_API_CREDS: ${{ secrets.GMAIL_API_CREDS }}
+      # mail-check.sh（gmail_check.py）が読む Service Account JSON。
+      # 新しい secret 名を優先し、旧 secret 名にフォールバックする。
+      GOOGLE_API_CREDS: ${{ secrets.GOOGLE_API_SERVICE_ACCOUNT_JSON || secrets.GMAIL_API_CREDS }}
       # 各スクリプトの最大実行時間（秒）。deadline-check は最大 3 回リトライするため長め。
       MAIL_TIMEOUT_SEC: '300'
       CALENDAR_TIMEOUT_SEC: '300'
@@ -59,6 +61,12 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          # gmail_check.py が使う Google API クライアント。
+          python3 -m pip install -r scripts/requirements.txt
+
       - name: Install Claude CLI
         run: |
           npm install -g @anthropic-ai/claude-code
@@ -73,8 +81,8 @@ jobs:
             echo "::warning title=Missing secret::CLAUDE_API_KEY が未設定です。Claude CLI を使う全チェックが失敗します。"
             missing=1
           fi
-          if [ -z "${GMAIL_API_CREDS:-}" ]; then
-            echo "::warning title=Missing secret::GMAIL_API_CREDS が未設定です。mail-check が失敗する可能性があります。"
+          if [ -z "${GOOGLE_API_CREDS:-}" ]; then
+            echo "::warning title=Missing secret::GOOGLE_API_SERVICE_ACCOUNT_JSON が未設定です。mail-check が失敗します。"
             missing=1
           fi
           if [ "$missing" -eq 0 ]; then
