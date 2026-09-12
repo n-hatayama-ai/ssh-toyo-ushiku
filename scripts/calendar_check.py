@@ -36,6 +36,20 @@ def load_credentials(creds_input: str) -> dict:
 
 def build_calendar_client(creds_dict: dict, account: str):
     scopes = ['https://www.googleapis.com/auth/calendar.readonly']
+
+    if 'refresh_token' in creds_dict:
+        from google.oauth2.credentials import Credentials as UserCredentials
+
+        credentials = UserCredentials(
+            token=None,
+            refresh_token=creds_dict['refresh_token'],
+            token_uri=creds_dict.get('token_uri', 'https://oauth2.googleapis.com/token'),
+            client_id=creds_dict['client_id'],
+            client_secret=creds_dict['client_secret'],
+            scopes=scopes,
+        )
+        return build('calendar', 'v3', credentials=credentials)
+
     credentials = service_account.Credentials.from_service_account_info(
         creds_dict, scopes=scopes
     )
@@ -154,6 +168,13 @@ def run(
             print(
                 "Hint: Calendar API not enabled. "
                 "Enable in Google Cloud Console: APIs & Services → Enable APIs and Services → Calendar API",
+                file=sys.stderr
+            )
+        elif 'invalid_grant' in str(e):
+            print(
+                "Hint: OAuth refresh token may have expired. "
+                "Re-run scripts/oauth_authorize.py to issue a new one "
+                "(tokens expire after 7 days while the OAuth consent screen is in Testing mode).",
                 file=sys.stderr
             )
 

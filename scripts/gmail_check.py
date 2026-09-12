@@ -215,22 +215,47 @@ def load_credentials_info(raw):
     return json.loads(decoded)
 
 
-def build_gmail_service(creds_info, impersonate):
-    """Service Account から Gmail API クライアントを組み立てる。
+def build_credentials(creds_info, impersonate):
+    """認証情報の dict から Credentials を組み立てる。
 
-    Service Account 自身は Gmail のメールボックスを持たないため、
-    ドメイン全体の委任（domain-wide delegation）でユーザーになりすます。
+    2 種類の形式に対応する:
+      - Service Account（"type": "service_account"）:
+        Gmail のメールボックスを持たないため、ドメイン全体の委任
+        （domain-wide delegation、Workspace 管理者の設定が必要）でなりすます。
+      - OAuth ユーザー認証（"refresh_token" を含む）:
+        本人が一度だけ同意して得たリフレッシュトークンを使う。
+        管理者権限が不要な代わりに、事前に一度ローカルで認可フローを
+        実行してリフレッシュトークンを発行しておく必要がある
+        （scripts/oauth_authorize.py 参照）。
     """
-    # 依存ライブラリはここで import する（純粋関数のテストを依存なしで動かすため）。
+    if "refresh_token" in creds_info:
+        from google.oauth2.credentials import Credentials
+
+        return Credentials(
+            token=None,
+            refresh_token=creds_info["refresh_token"],
+            token_uri=creds_info.get("token_uri", "https://oauth2.googleapis.com/token"),
+            client_id=creds_info["client_id"],
+            client_secret=creds_info["client_secret"],
+            scopes=SCOPES,
+        )
+
     from google.oauth2 import service_account
-    from googleapiclient.discovery import build
 
     credentials = service_account.Credentials.from_service_account_info(
         creds_info, scopes=SCOPES
     )
     if impersonate:
         credentials = credentials.with_subject(impersonate)
+    return credentials
 
+
+def build_gmail_service(creds_info, impersonate):
+    """認証情報から Gmail API クライアントを組み立てる。"""
+    # 依存ライブラリはここで import する（純粋関数のテストを依存なしで動かすため）。
+    from googleapiclient.discovery import build
+
+    credentials = build_credentials(creds_info, impersonate)
     return build("gmail", "v1", credentials=credentials, cache_discovery=False)
 
 
@@ -851,6 +876,13 @@ def print_hint(exc, args):
     elif "accessNotConfigured" in text or "has not been used in project" in text:
         print(
             "Hint: Google Cloud プロジェクトで Gmail API が有効化されていない可能性があります。",
+            file=sys.stderr,
+        )
+    elif "invalid_grant" in text:
+        print(
+            "Hint: OAuth のリフレッシュトークンが失効している可能性があります。"
+            " scripts/oauth_authorize.py を再実行して発行し直してください"
+            "（OAuth 同意画面の公開ステータスが「テスト」のままだと 7 日で失効します）。",
             file=sys.stderr,
         )
 
