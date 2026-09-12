@@ -76,15 +76,13 @@ class AggregateLogsTestBase(unittest.TestCase):
 class TestCase1NewFile(AggregateLogsTestBase):
     """ケース1: ファイルが無い状態からの新規作成。"""
 
-    def test_creates_file_with_meta_and_three_entries(self):
+    def test_creates_file_with_meta_and_two_entries(self):
         result = self.run_script(
             {
                 "SCRIPT_MAIL_STATUS": "ok",
                 "SCRIPT_MAIL_MESSAGE": "15件のメール確認",
-                "SCRIPT_CALENDAR_STATUS": "ok",
-                "SCRIPT_CALENDAR_MESSAGE": "本日の予定3件",
-                "SCRIPT_DEADLINE_STATUS": "error",
-                "SCRIPT_DEADLINE_ERROR": "APIに接続できません",
+                "SCRIPT_CALENDAR_STATUS": "error",
+                "SCRIPT_CALENDAR_ERROR": "APIに接続できません",
             }
         )
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -93,18 +91,16 @@ class TestCase1NewFile(AggregateLogsTestBase):
         self.assertEqual(document["meta"]["project"], "noboru")
         self.assertEqual(document["meta"]["version"], 1)
         self.assertIsNotNone(document["meta"]["last_updated"])
-        self.assertEqual(len(document["logs"]), 3)
+        self.assertEqual(len(document["logs"]), 2)
 
         entries = self.entries_by_script(document)
-        self.assertEqual(
-            sorted(entries), ["calendar-check", "deadline-check", "mail-check"]
-        )
+        self.assertEqual(sorted(entries), ["calendar-check", "mail-check"])
         self.assertEqual(entries["mail-check"]["status"], "ok")
         self.assertEqual(entries["mail-check"]["summary"], "15件のメール確認")
         self.assertIsNone(entries["mail-check"]["error_message"])
         self.assertIsNone(entries["mail-check"]["duration_sec"])
-        self.assertEqual(entries["deadline-check"]["status"], "error")
-        self.assertEqual(entries["deadline-check"]["error_message"], "APIに接続できません")
+        self.assertEqual(entries["calendar-check"]["status"], "error")
+        self.assertEqual(entries["calendar-check"]["error_message"], "APIに接続できません")
 
     def test_formatting_is_indent2_utf8_and_trailing_newline(self):
         self.run_script({"SCRIPT_MAIL_STATUS": "ok", "SCRIPT_MAIL_MESSAGE": "日本語"})
@@ -165,8 +161,8 @@ class TestCase2SameDayRerun(AggregateLogsTestBase):
         self.assertEqual(result.returncode, 0, result.stderr)
 
         document = self.read_log()
-        # 過去ログ1 + 同日別スクリプト1 + 新規3 = 5
-        self.assertEqual(len(document["logs"]), 5)
+        # 過去ログ1 + 同日別スクリプト1 + 新規2 = 4
+        self.assertEqual(len(document["logs"]), 4)
 
         mail_today = [
             e
@@ -202,7 +198,7 @@ class TestCase3CorruptJson(AggregateLogsTestBase):
             self.assertEqual(handle.read(), "{ this is not json")
 
         document = self.read_log()
-        self.assertEqual(len(document["logs"]), 3)
+        self.assertEqual(len(document["logs"]), 2)
 
 
 class TestCase4MalformedStructure(AggregateLogsTestBase):
@@ -219,7 +215,7 @@ class TestCase4MalformedStructure(AggregateLogsTestBase):
 
         document = self.read_log()
         self.assertEqual(document["meta"]["project"], "noboru")
-        self.assertEqual(len(document["logs"]), 3)
+        self.assertEqual(len(document["logs"]), 2)
 
     def test_non_dict_entries_are_dropped(self):
         seed = {"meta": {}, "logs": ["ゴミ", 42, None]}
@@ -229,7 +225,7 @@ class TestCase4MalformedStructure(AggregateLogsTestBase):
         result = self.run_script({"SCRIPT_MAIL_STATUS": "ok"})
         self.assertEqual(result.returncode, 0, result.stderr)
         document = self.read_log()
-        self.assertEqual(len(document["logs"]), 3)
+        self.assertEqual(len(document["logs"]), 2)
         self.assertTrue(all(isinstance(e, dict) for e in document["logs"]))
 
 
@@ -292,7 +288,7 @@ class TestCase7CwdIndependence(AggregateLogsTestBase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(os.path.exists(nested))
-        self.assertEqual(len(self.read_log(nested)["logs"]), 3)
+        self.assertEqual(len(self.read_log(nested)["logs"]), 2)
 
 
 class TestNonFiniteDuration(AggregateLogsTestBase):
@@ -376,14 +372,14 @@ class TestTimezoneDedup(AggregateLogsTestBase):
             [], first, aggregate_logs.local_date(scheduled)
         )
         self.assertEqual(removed, 0)
-        self.assertEqual(len(logs), 3)
+        self.assertEqual(len(logs), 2)
 
         second = aggregate_logs.build_entries(manual)
         logs, removed = aggregate_logs.merge_logs(
             logs, second, aggregate_logs.local_date(manual)
         )
-        self.assertEqual(removed, 3, "JST 同日の再実行は前回分を置き換えるべき")
-        self.assertEqual(len(logs), 3)
+        self.assertEqual(removed, 2, "JST 同日の再実行は前回分を置き換えるべき")
+        self.assertEqual(len(logs), 2)
 
         mail = [e for e in logs if e["script"] == "mail-check"]
         self.assertEqual(len(mail), 1)
@@ -400,7 +396,7 @@ class TestTimezoneDedup(AggregateLogsTestBase):
             logs, aggregate_logs.build_entries(day2), aggregate_logs.local_date(day2)
         )
         self.assertEqual(removed, 0)
-        self.assertEqual(len(logs), 6)
+        self.assertEqual(len(logs), 4)
 
 
 class TestEnvNormalization(AggregateLogsTestBase):

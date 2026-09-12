@@ -8,7 +8,7 @@ GitHub Actions の各ステップが環境変数で結果を渡す想定:
     SCRIPT_MAIL_ERROR=""            # error のときのみ
     SCRIPT_MAIL_DURATION=12.3       # 任意（秒）
 
-CALENDAR / DEADLINE も同様のプレフィックスを使う。
+CALENDAR も同様のプレフィックスを使う。
 
 標準ライブラリのみ（json / math / os / sys / datetime）で動作し、Python 3.9 以上を想定。
 
@@ -32,7 +32,6 @@ from datetime import datetime, timezone
 SCRIPTS = (
     ("mail-check", "SCRIPT_MAIL"),
     ("calendar-check", "SCRIPT_CALENDAR"),
-    ("deadline-check", "SCRIPT_DEADLINE"),
 )
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -153,7 +152,7 @@ def local_date(now):
 
 
 def build_entries(now):
-    """環境変数から 3 スクリプト分のログエントリを作る。"""
+    """環境変数から SCRIPTS 分のログエントリを作る。"""
     today = local_date(now)
     timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
 

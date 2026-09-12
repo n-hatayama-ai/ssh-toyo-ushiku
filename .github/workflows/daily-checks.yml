@@ -31,16 +31,12 @@ jobs:
       # 日本語の出力を bash の文字数カウント（${var:0:200}）で壊さないため。
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
-      CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
-      # Claude CLI 本体が読むのは ANTHROPIC_API_KEY。同じ secret を両方に渡す。
-      ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
-      # mail-check.sh（gmail_check.py）が読む Service Account JSON。
+      # mail-check.sh（gmail_check.py）/ calendar-check.sh（calendar_check.py）が読む Service Account JSON。
       # 新しい secret 名を優先し、旧 secret 名にフォールバックする。
       GOOGLE_API_CREDS: ${{ secrets.GOOGLE_API_SERVICE_ACCOUNT_JSON || secrets.GMAIL_API_CREDS }}
-      # 各スクリプトの最大実行時間（秒）。deadline-check は最大 3 回リトライするため長め。
+      # 各スクリプトの最大実行時間（秒）。
       MAIL_TIMEOUT_SEC: '300'
       CALENDAR_TIMEOUT_SEC: '300'
-      DEADLINE_TIMEOUT_SEC: '600'
 
     steps:
       - name: Checkout repository
@@ -51,11 +47,6 @@ jobs:
           # push 前に rebase するので shallow clone にしない。
           fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -64,34 +55,20 @@ jobs:
       - name: Install Python dependencies
         run: |
           python3 -m pip install --upgrade pip
-          # gmail_check.py が使う Google API クライアント。
+          # gmail_check.py / calendar_check.py が使う Google API クライアント。
           python3 -m pip install -r scripts/requirements.txt
-
-      - name: Install Claude CLI
-        run: |
-          npm install -g @anthropic-ai/claude-code
-          # インストール後に PATH 上で解決できるか検証する（できなければここで失敗させる）
-          command -v claude
-          claude --version
 
       - name: Verify required secrets
         run: |
-          missing=0
-          if [ -z "${CLAUDE_API_KEY:-}" ]; then
-            echo "::warning title=Missing secret::CLAUDE_API_KEY が未設定です。Claude CLI を使う全チェックが失敗します。"
-            missing=1
-          fi
           if [ -z "${GOOGLE_API_CREDS:-}" ]; then
-            echo "::warning title=Missing secret::GOOGLE_API_SERVICE_ACCOUNT_JSON が未設定です。mail-check が失敗します。"
-            missing=1
-          fi
-          if [ "$missing" -eq 0 ]; then
+            echo "::warning title=Missing secret::GOOGLE_API_SERVICE_ACCOUNT_JSON が未設定です。mail-check / calendar-check が失敗します。"
+          else
             echo "required secrets: OK"
           fi
         continue-on-error: true
 
       - name: Make check scripts executable
-        run: chmod +x scripts/mail-check.sh scripts/calendar-check.sh scripts/deadline-check.sh
+        run: chmod +x scripts/mail-check.sh scripts/calendar-check.sh
 
       - name: Run mail-check.sh
         id: mail_check
@@ -164,40 +141,6 @@ jobs:
           echo "exit_code=${exit_code}" >> "$GITHUB_OUTPUT"
           echo "duration=${duration}" >> "$GITHUB_OUTPUT"
 
-      - name: Run deadline-check.sh
-        id: deadline_check
-        continue-on-error: true
-        run: |
-          set +e
-          started=$(date +%s)
-          output=$(timeout "${DEADLINE_TIMEOUT_SEC}" ./scripts/deadline-check.sh 2>&1)
-          exit_code=$?
-          duration=$(( $(date +%s) - started ))
-          set -e
-
-          printf '%s\n' "$output"
-          echo "----- exit_code=${exit_code} duration=${duration}s -----"
-
-          message=$(printf '%s' "$output" | tail -5 | tr '\r\n' '  ')
-          message=${message:0:200}
-
-          if [ "$exit_code" -eq 0 ]; then
-            echo "status=ok" >> "$GITHUB_OUTPUT"
-            echo "error=" >> "$GITHUB_OUTPUT"
-          else
-            echo "status=error" >> "$GITHUB_OUTPUT"
-            if [ "$exit_code" -eq 124 ]; then
-              reason="timeout after ${DEADLINE_TIMEOUT_SEC}s"
-            else
-              reason="exit code ${exit_code}"
-            fi
-            error="${reason}: ${message}"
-            echo "error=${error:0:200}" >> "$GITHUB_OUTPUT"
-          fi
-          echo "message=${message}" >> "$GITHUB_OUTPUT"
-          echo "exit_code=${exit_code}" >> "$GITHUB_OUTPUT"
-          echo "duration=${duration}" >> "$GITHUB_OUTPUT"
-
       - name: Aggregate logs to execution-log.json
         if: always()
         env:
@@ -209,10 +152,6 @@ jobs:
           SCRIPT_CALENDAR_MESSAGE: ${{ steps.calendar_check.outputs.message }}
           SCRIPT_CALENDAR_ERROR: ${{ steps.calendar_check.outputs.error }}
           SCRIPT_CALENDAR_DURATION: ${{ steps.calendar_check.outputs.duration }}
-          SCRIPT_DEADLINE_STATUS: ${{ steps.deadline_check.outputs.status }}
-          SCRIPT_DEADLINE_MESSAGE: ${{ steps.deadline_check.outputs.message }}
-          SCRIPT_DEADLINE_ERROR: ${{ steps.deadline_check.outputs.error }}
-          SCRIPT_DEADLINE_DURATION: ${{ steps.deadline_check.outputs.duration }}
         run: |
           echo "aggregating as JST date: $(date '+%Y-%m-%d %H:%M:%S %Z')"
           python3 scripts/aggregate_logs.py
@@ -238,8 +177,7 @@ jobs:
         if: >-
           always() &&
           (steps.mail_check.outputs.status == 'error' ||
-           steps.calendar_check.outputs.status == 'error' ||
-           steps.deadline_check.outputs.status == 'error')
+           steps.calendar_check.outputs.status == 'error')
         uses: actions/github-script@v7
         env:
           # ${{ }} をスクリプト本文に直接埋め込むとスクリプト出力で JS を壊せてしまうため、
@@ -248,8 +186,6 @@ jobs:
           MAIL_ERROR: ${{ steps.mail_check.outputs.error }}
           CALENDAR_STATUS: ${{ steps.calendar_check.outputs.status }}
           CALENDAR_ERROR: ${{ steps.calendar_check.outputs.error }}
-          DEADLINE_STATUS: ${{ steps.deadline_check.outputs.status }}
-          DEADLINE_ERROR: ${{ steps.deadline_check.outputs.error }}
           LOG_BRANCH: ${{ github.ref_name }}
         with:
           script: |
@@ -265,7 +201,6 @@ jobs:
             const checks = [
               { name: 'mail-check', status: process.env.MAIL_STATUS, error: process.env.MAIL_ERROR },
               { name: 'calendar-check', status: process.env.CALENDAR_STATUS, error: process.env.CALENDAR_ERROR },
-              { name: 'deadline-check', status: process.env.DEADLINE_STATUS, error: process.env.DEADLINE_ERROR },
             ];
             const failed = checks.filter((c) => c.status === 'error');
             if (failed.length === 0) {
@@ -318,5 +253,4 @@ jobs:
             echo "| --- | --- | --- | --- |"
             echo "| mail-check | ${{ steps.mail_check.outputs.status }} | ${{ steps.mail_check.outputs.exit_code }} | ${{ steps.mail_check.outputs.duration }}s |"
             echo "| calendar-check | ${{ steps.calendar_check.outputs.status }} | ${{ steps.calendar_check.outputs.exit_code }} | ${{ steps.calendar_check.outputs.duration }}s |"
-            echo "| deadline-check | ${{ steps.deadline_check.outputs.status }} | ${{ steps.deadline_check.outputs.exit_code }} | ${{ steps.deadline_check.outputs.duration }}s |"
           } >> "$GITHUB_STEP_SUMMARY"
