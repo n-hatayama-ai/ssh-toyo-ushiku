@@ -1,6 +1,6 @@
 {
   "meta": {
-    "last_updated": "2026-09-12T08:48:26Z",
+    "last_updated": "2026-09-12T10:08:46Z",
     "project": "noboru",
     "version": 1
   },
@@ -9,19 +9,19 @@
       "date": "2026-09-12",
       "script": "mail-check",
       "status": "error",
-      "timestamp": "2026-09-12T08:48:26Z",
+      "timestamp": "2026-09-12T10:08:46Z",
       "duration_sec": 0.0,
-      "summary": "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/json/decoder.py\", line 353, in raw_decode     obj, end = self.scan_once(s, idx)",
-      "error_message": "exit code 1:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/json/decoder.py\", line 353, in raw_decode     obj, end = self.scan_onc"
+      "summary": "signer = _service_account_info.from_dict(              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/google/auth/_service_account_in",
+      "error_message": "exit code 1:     signer = _service_account_info.from_dict(              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/google/auth/_servi"
     },
     {
       "date": "2026-09-12",
       "script": "calendar-check",
       "status": "error",
-      "timestamp": "2026-09-12T08:48:26Z",
-      "duration_sec": 1.0,
-      "summary": "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/json/decoder.py\", line 353, in raw_decode     obj, end = self.scan_once(s, idx)",
-      "error_message": "exit code 1:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/json/decoder.py\", line 353, in raw_decode     obj, end = self.scan_onc"
+      "timestamp": "2026-09-12T10:08:46Z",
+      "duration_sec": 0.0,
+      "summary": "signer = _service_account_info.from_dict(              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/google/auth/_service_account_in",
+      "error_message": "exit code 1:     signer = _service_account_info.from_dict(              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/google/auth/_servi"
     }
   ]
 }
