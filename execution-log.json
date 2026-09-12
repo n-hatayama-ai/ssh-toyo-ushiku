@@ -1,6 +1,6 @@
 {
   "meta": {
-    "last_updated": "2026-09-12T10:08:46Z",
+    "last_updated": "2026-09-12T10:13:28Z",
     "project": "noboru",
     "version": 1
   },
@@ -8,20 +8,20 @@
     {
       "date": "2026-09-12",
       "script": "mail-check",
-      "status": "error",
-      "timestamp": "2026-09-12T10:08:46Z",
-      "duration_sec": 0.0,
-      "summary": "signer = _service_account_info.from_dict(              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/google/auth/_service_account_in",
-      "error_message": "exit code 1:     signer = _service_account_info.from_dict(              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/google/auth/_servi"
+      "status": "ok",
+      "timestamp": "2026-09-12T10:13:28Z",
+      "duration_sec": 2.0,
+      "summary": "2026-09-12 19:13:26 gmail_check: 6件取得 / 要対応1件 / 除外5件   markdown: /home/runner/work/ssh-toyo-ushiku/ssh-toyo-ushiku/メール/成果物/Gmail_要確認事項まとめ_20260912.md   cache   : /home/runner/work/ssh-toyo-ushiku/ssh-",
+      "error_message": null
     },
     {
       "date": "2026-09-12",
       "script": "calendar-check",
       "status": "error",
-      "timestamp": "2026-09-12T10:08:46Z",
+      "timestamp": "2026-09-12T10:13:28Z",
       "duration_sec": 0.0,
-      "summary": "signer = _service_account_info.from_dict(              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/google/auth/_service_account_in",
-      "error_message": "exit code 1:     signer = _service_account_info.from_dict(              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/google/auth/_servi"
+      "summary": "return wrapped(*args, **kwargs)            ^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/googleapiclient/http.py\", line 1018, in execute",
+      "error_message": "exit code 1:     return wrapped(*args, **kwargs)            ^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/googleapiclient/http.py\", line 1018, i"
     }
   ]
 }
