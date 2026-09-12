@@ -2,23 +2,22 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# 環境変数で上書き可能。未設定ならリポジトリ／スクリプト位置から解決する。
 PROJECT_DIR="${PROJECT_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
-CLAUDE_BIN="${CLAUDE_BIN:-claude}"
-CLAUDE_MODEL="${CLAUDE_MODEL:-claude-sonnet-5}"
-PROMPT_FILE="${PROMPT_FILE:-$SCRIPT_DIR/calendar_check_prompt.md}"
-CACHE_BUILDER="${CACHE_BUILDER:-$SCRIPT_DIR/build_calendar_cache.py}"
 
-cd "$PROJECT_DIR"
+GOOGLE_API_CREDS="${GOOGLE_API_CREDS:-${GOOGLE_API_SERVICE_ACCOUNT_JSON:-${CALENDAR_API_CREDS:-}}}"
 
-"$CLAUDE_BIN" -p "$(cat "$PROMPT_FILE")" \
-  --model "$CLAUDE_MODEL" \
-  --allowedTools "mcp__claude_ai_Google_Calendar__list_events,mcp__claude_ai_Google_Calendar__search_events,mcp__claude_ai_Google_Calendar__list_calendars,Read,Write"
-
-# build_calendar_cache.py はローカル環境専用。存在する場合のみ実行する。
-if [ -f "$CACHE_BUILDER" ]; then
-  python3 "$CACHE_BUILDER"
-else
-  echo "$(date '+%Y-%m-%d %H:%M:%S') cache builder not found at $CACHE_BUILDER, skipping"
+if [ -z "$GOOGLE_API_CREDS" ]; then
+  echo "Error: GOOGLE_API_CREDS environment variable is not set" >&2
+  exit 1
 fi
+
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+CALENDAR_SCRIPT="${CALENDAR_SCRIPT:-$SCRIPT_DIR/calendar_check.py}"
+CALENDAR_ACCOUNT="${CALENDAR_ACCOUNT:-n-hatayama@toyo.jp}"
+CALENDAR_DAYS_AHEAD="${CALENDAR_DAYS_AHEAD:-21}"
+
+"$PYTHON_BIN" "$CALENDAR_SCRIPT" \
+  --google-creds "$GOOGLE_API_CREDS" \
+  --project-dir "$PROJECT_DIR" \
+  --account "$CALENDAR_ACCOUNT" \
+  --days-ahead "$CALENDAR_DAYS_AHEAD"
