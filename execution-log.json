@@ -1,6 +1,6 @@
 {
   "meta": {
-    "last_updated": "2026-09-12T10:13:28Z",
+    "last_updated": "2026-09-12T10:22:38Z",
     "project": "noboru",
     "version": 1
   },
@@ -9,19 +9,19 @@
       "date": "2026-09-12",
       "script": "mail-check",
       "status": "ok",
-      "timestamp": "2026-09-12T10:13:28Z",
-      "duration_sec": 2.0,
-      "summary": "2026-09-12 19:13:26 gmail_check: 6件取得 / 要対応1件 / 除外5件   markdown: /home/runner/work/ssh-toyo-ushiku/ssh-toyo-ushiku/メール/成果物/Gmail_要確認事項まとめ_20260912.md   cache   : /home/runner/work/ssh-toyo-ushiku/ssh-",
+      "timestamp": "2026-09-12T10:22:38Z",
+      "duration_sec": 1.0,
+      "summary": "2026-09-12 19:22:36 gmail_check: 6件取得 / 要対応1件 / 除外5件   markdown: /home/runner/work/ssh-toyo-ushiku/ssh-toyo-ushiku/メール/成果物/Gmail_要確認事項まとめ_20260912.md   cache   : /home/runner/work/ssh-toyo-ushiku/ssh-",
       "error_message": null
     },
     {
       "date": "2026-09-12",
       "script": "calendar-check",
-      "status": "error",
-      "timestamp": "2026-09-12T10:13:28Z",
-      "duration_sec": 0.0,
-      "summary": "return wrapped(*args, **kwargs)            ^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/googleapiclient/http.py\", line 1018, in execute",
-      "error_message": "exit code 1:     return wrapped(*args, **kwargs)            ^^^^^^^^^^^^^^^^^^^^^^^^   File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/googleapiclient/http.py\", line 1018, i"
+      "status": "ok",
+      "timestamp": "2026-09-12T10:22:38Z",
+      "duration_sec": 1.0,
+      "summary": "Calendar events saved to /home/runner/work/ssh-toyo-ushiku/ssh-toyo-ushiku/開発/成果物/scripts/calendar_events_raw.json (32 events)",
+      "error_message": null
     }
   ]
 }
