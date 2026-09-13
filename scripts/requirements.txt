@@ -1,5 +1,0 @@
-# gmail_check.py（mail-check.sh のバックエンド）が必要とするライブラリ。
-# GitHub Actions では daily-checks.yml の "Install Python dependencies" で入る。
-google-api-python-client>=2.100.0
-google-auth>=2.23.0
-google-auth-oauthlib>=1.1.0
