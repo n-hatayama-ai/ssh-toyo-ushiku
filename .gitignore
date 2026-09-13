@@ -1,2 +1,6 @@
 .DS_Store
 assets/site-src/
+
+# daily check scripts の実行時生成ファイル
+scripts/last_run_date.txt
+scripts/*.log
