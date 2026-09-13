@@ -664,7 +664,7 @@ body.intro-active { overflow: hidden; height: 100vh; }
    ========================================================================== */
 .cursor-dot {
   position: fixed; top: 0; left: 0; width: 10px; height: 10px; border-radius: 50%;
-  background: var(--accent); pointer-events: none; z-index: 999; mix-blend-mode: difference;
+  background: var(--accent); pointer-events: none; z-index: 260; mix-blend-mode: difference;
   transform: translate(-50%, -50%); opacity: 0; transition: opacity .3s, width .25s, height .25s;
 }
 @media (hover: hover) and (pointer: fine) { .cursor-dot.active { opacity: 1; } }
