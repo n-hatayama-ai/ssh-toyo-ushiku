@@ -21,6 +21,15 @@
     [...filter.children].forEach(x => x.setAttribute('aria-pressed', x === b));
     document.querySelectorAll('.card[data-cat]').forEach(c => { c.classList.toggle('hide', b.dataset.c !== 'all' && c.dataset.cat !== b.dataset.c); c.classList.add('in-view'); });
   });
+  // 写真が複数ある記事：矢印・スワイプ・左右キーでめくる
+  document.querySelectorAll('.car').forEach(car => {
+    const track = car.querySelector('.car-track'), num = car.querySelector('.car-count b'), n = track.children.length;
+    const go = d => { const i = Math.round(track.scrollLeft / track.clientWidth); track.scrollTo({ left: ((i + d + n) % n) * track.clientWidth, behavior: 'smooth' }); };
+    car.querySelector('.prev').addEventListener('click', () => go(-1));
+    car.querySelector('.next').addEventListener('click', () => go(1));
+    track.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1); });
+    track.addEventListener('scroll', () => { num.textContent = Math.round(track.scrollLeft / track.clientWidth) + 1; }, { passive: true });
+  });
   // 記事へ直接来たときは、その記事を開いて見せる
   const t = location.hash && document.getElementById(location.hash.slice(1));
   if (t && t.matches('.card')) { t.classList.add('in-view'); const d = t.querySelector('details'); if (d) d.open = true; }

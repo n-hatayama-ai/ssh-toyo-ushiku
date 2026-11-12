@@ -175,3 +175,15 @@ figcaption { font: 400 11px var(--font-mono); letter-spacing: .08em; color: var(
 .rv { opacity: 0; transform: translateY(26px); transition: transform .9s var(--ease), opacity .9s; }
 .rv.in-view { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .rv, .hero h1 span, .hero .lead { opacity: 1; transform: none; transition: none; animation: none; } .hero::after, .dots i { animation: none; } html { scroll-behavior: auto; } }
+
+/* 写真が複数ある記事のカルーセル */
+.car { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--fg); }
+.car-track { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+.car-track::-webkit-scrollbar { display: none; }
+.car-track:focus-visible { outline: 3px solid var(--vivid-gold); outline-offset: -3px; }
+.car-track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; scroll-snap-align: start; }
+.car-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border: 0; border-radius: 50%; background: rgba(13,26,48,.72); color: var(--dark-fg); font: 700 20px/1 var(--font-latin); cursor: pointer; display: grid; place-items: center; padding: 0 0 3px; transition: background .3s, color .3s; }
+.car-btn.prev { left: 10px; } .car-btn.next { right: 10px; }
+.car-btn:hover, .car-btn:focus-visible { background: var(--vivid-gold); color: var(--dark); outline: none; }
+.car-count { position: absolute; right: 10px; bottom: 10px; padding: 4px 9px; background: rgba(13,26,48,.72); color: var(--dark-fg); font: 400 10px var(--font-mono); letter-spacing: .1em; border-radius: 99px; }
+.car-count b { font-weight: 400; }

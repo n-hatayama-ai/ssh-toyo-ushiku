@@ -1,5 +1,5 @@
 {
- "_help": "Googleサイト「探究活動の様々な取り組み」の記事ごとの設定。head = Googleサイト上の見出し（末尾 * は前方一致）。key = 並び順(YYYYMMDD)。cat = award/lecture/field/global/lab/media/visit。img = assets/news/ 内のファイル名（なければ空）。",
+ "_help": "Googleサイト「探究活動の様々な取り組み」の記事ごとの設定。head = Googleサイト上の見出し（末尾 * は前方一致）。key = 並び順(YYYYMMDD)。cat = award/lecture/field/global/lab/media/visit。img = assets/news/ 内のファイル名（なければ空）。写真を複数枚にするときは \"imgs\": [\"1枚目.jpg\", \"2枚目.jpg\"] を足す（カルーセル表示になる）。",
  "articles": [
   {"id": "jica2026", "head": "JICA長期研修員3名が来校*", "title": "JICA長期研修員3名が来校 ― 書道体験・文化交流・研究発表", "date": "2026.11.09", "key": "20261109", "cat": "global", "img": "x-jica2026.jpg"},
   {"id": "jsse", "head": "「日本科学教育学会*", "title": "日本科学教育学会 第50回年会で本校教員が研究成果を発表", "date": "2026.09.11", "key": "20260911", "cat": "award", "img": ""},

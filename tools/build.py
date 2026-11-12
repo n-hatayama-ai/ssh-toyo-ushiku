@@ -92,15 +92,25 @@ for h in ACT_HEADS:                      # 設定のない新しい記事は「�
 ARTS += [dict(e) for e in CFG['extra']]
 ARTS.sort(key=lambda a: a['key'], reverse=True)
 AR = {a['id']: a for a in ARTS}
-for a in ARTS:
-    if a['img'] and not (ROOT / 'assets/news' / a['img']).exists(): NOTES.append(f'写真が見つかりません: assets/news/{a["img"]}（{a["title"]}）'); a['img'] = ''
+for a in ARTS:                           # 写真は "img": "1枚" でも "imgs": ["1枚目", "2枚目", …] でもよい
+    want = a.get('imgs') or ([a['img']] if a.get('img') else [])
+    a['imgs'] = [f for f in want if (ROOT / 'assets/news' / f).exists()]
+    NOTES += [f'写真が見つかりません: assets/news/{f}（{a["title"]}）' for f in want if f not in a['imgs']]
+    a['img'] = a['imgs'][0] if a['imgs'] else ''
+def photo(a):
+    if not a['imgs']: return f'<div class="noimg c-{a["cat"]}"><span>{CATS[a["cat"]]}</span></div>'
+    if len(a['imgs']) == 1: return f'<img src="assets/news/{a["img"]}" alt="" loading="lazy">'
+    n = len(a['imgs'])
+    return (f'<div class="car" role="group" aria-label="写真 {n}枚"><div class="car-track" tabindex="0">'
+            + ''.join(f'<img src="assets/news/{f}" alt="写真 {i + 1} / {n}" loading="lazy">' for i, f in enumerate(a['imgs']))
+            + f'</div><button class="car-btn prev" type="button" aria-label="前の写真">‹</button><button class="car-btn next" type="button" aria-label="次の写真">›</button><span class="car-count"><b>1</b> / {n}</span></div>')
 
 def linkify(t): return re.sub(r'(https?://[^\s<）)]+)', r'<a href="\1" target="_blank" rel="noopener">\1</a>', t)
 def paras(ps): return ''.join(f'<p>{linkify(esc(p))}</p>' for p in ps)
 def sec(en, jp, inner, cls='cream'): return f'<section class="sec {cls}"><div class="in"><p class="eyebrow rv">{en}</p><h2 class="rv">{jp}</h2>{inner}</div></section>'
 def fig(img, alt, cls=''): return f'<figure class="rv {cls}"><img src="assets/news/{img}" alt="{esc(alt)}" loading="lazy"></figure>'
 def card(a, full=True):
-    im = f'<img src="assets/news/{a["img"]}" alt="" loading="lazy">' if a['img'] else f'<div class="noimg c-{a["cat"]}"><span>{CATS[a["cat"]]}</span></div>'
+    im = photo(a)
     summ = esc(a['body'][0][:96]) + ('…' if len(a['body'][0]) > 96 or len(a['body']) > 1 else '')
     more = f'<details><summary>全文を読む</summary>{paras(a["body"])}</details>' if full else f'<a class="more" href="{href("activities", "#" + a["id"])}"{ext("activities")}>くわしく →</a>'
     return f'<article class="card rv" id="{a["id"]}" data-cat="{a["cat"]}">{im}<div class="cb"><p class="meta"><time>{a["date"]}</time><span class="tag c-{a["cat"]}">{CATS[a["cat"]]}</span></p><h3>{esc(a["title"])}</h3><p class="summ">{summ}</p>{more}</div></article>'

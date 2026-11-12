@@ -29,6 +29,7 @@ python3 -m http.server 8792    # http://127.0.0.1:8792/ で確認してから公
 | トップページ（3D・章の文章・数字） | `index.html` |
 | 下層ページの見た目 | `sub.css` / `sub.js` |
 | 記事の写真 | `assets/news/`　SSH通信の表紙: `assets/logos/noN.jpg` |
+| 記事の写真を複数枚に（カルーセル） | `content/articles.json` の記事に `"imgs": ["a.jpg", "b.jpg"]` を足す |
 
 `inquiry.html` などの下層ページ、`site-data.js`、`sitemap.xml`、`robots.txt` は生成物。直接編集しない。
 
