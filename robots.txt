@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /classic/
+
+Sitemap: https://n-hatayama-ai.github.io/ssh-toyo-ushiku/sitemap.xml

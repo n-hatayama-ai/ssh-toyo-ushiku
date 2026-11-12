@@ -1,0 +1,16 @@
+{
+  "base_url": "https://n-hatayama-ai.github.io/ssh-toyo-ushiku/",
+  "gsites_base": "https://sites.google.com/toyo.jp/test2026ssh/",
+  "_pages_help": "local = サイト内のページを表示 / gsites = Googleサイトへ直接リンク（現行と同じ動き）。変更後は python3 tools/build.py",
+  "pages": {
+    "inquiry": "local",
+    "frontier": "local",
+    "achievements": "local",
+    "activities": "local",
+    "outreach": "local",
+    "reports": "local",
+    "committee": "local",
+    "visits": "local",
+    "logos": "local"
+  }
+}
