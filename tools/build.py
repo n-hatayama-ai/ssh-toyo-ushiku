@@ -109,6 +109,15 @@ def linkify(t): return re.sub(r'(https?://[^\s<）)]+)', r'<a href="\1" target="
 def paras(ps): return ''.join(f'<p>{linkify(esc(p))}</p>' for p in ps)
 def sec(en, jp, inner, cls='cream'): return f'<section class="sec {cls}"><div class="in"><p class="eyebrow rv">{en}</p><h2 class="rv">{jp}</h2>{inner}</div></section>'
 def fig(img, alt, cls=''): return f'<figure class="rv {cls}"><img src="assets/news/{img}" alt="{esc(alt)}" loading="lazy"></figure>'
+def gal(imgs, alt, cls='', fit=False):   # 写真を数枚まとめて見せる（1枚なら fig と同じ）。fit=True はポスター・賞状など切らずに全体を見せる
+    have = [f for f in imgs if (ROOT / 'assets/news' / f).exists()]
+    NOTES.extend(f'写真が見つかりません: assets/news/{f}（{alt}）' for f in imgs if f not in have)
+    if len(have) <= 1: return fig(have[0], alt, cls) if have else ''
+    n = len(have)
+    return (f'<figure class="rv gal {cls}"><div class="car{" fit" if fit else ""}" role="group" aria-label="{esc(alt)} 写真 {n}枚"><div class="car-track" tabindex="0">'
+            + ''.join(f'<img src="assets/news/{f}" alt="{esc(alt)} {i + 1} / {n}" loading="lazy">' for i, f in enumerate(have))
+            + f'</div><button class="car-btn prev" type="button" aria-label="前の写真">‹</button><button class="car-btn next" type="button" aria-label="次の写真">›</button><span class="car-count"><b>1</b> / {n}</span></div></figure>')
+YOUTUBE = ('oWmNuGyNOE0', 10590)   # 成果物ページの動画（Googleサイトと同じ。2:56:30 から再生）
 def card(a, full=True):
     im = photo(a)
     summ = esc(a['body'][0][:96]) + ('…' if len(a['body'][0]) > 96 or len(a['body']) > 1 else '')
@@ -124,7 +133,7 @@ def p_inquiry():
     if 'まず、' in t and '「哲学という羅針盤」' in t:
         a, rest = t.split('まず、', 1); b, c = rest.split('「哲学という羅針盤」', 1); ps = [a, 'まず、' + b, '「哲学という羅針盤」' + c]
     else: ps = [t]
-    h = sec('VISION', '科学と哲学の対話から、新しい価値を。', f'<div class="two"><div class="rv prose">{paras(ps)}</div><div class="stack">{fig("inq-00.jpg", "実験に取り組む生徒")}{fig("inq-01.jpg", "CAD実習に取り組む生徒")}</div></div>')
+    h = sec('VISION', '科学と哲学の対話から、新しい価値を。', f'<div class="two"><div class="rv prose">{paras(ps)}</div><div class="stack">{gal(["inq-00.jpg", "inq-sticky.jpg"], "哲学シンキングと実験に取り組む生徒")}{gal(["inq-01.jpg", "inq-soy.jpg"], "CAD実習と大豆の収穫")}</div></div>')
     h += sec('THREE PILLARS', '3つの柱', '<div class="pillars">'
         '<div class="pillar rv" style="--c:#3f6fd1"><b>01</b><h3>哲学シンキング</h3><p>全教科で展開。「なぜそうなのか」「真に価値があるものは何か」という、本質的な問いを立てる力を磨きます。</p></div>'
         '<div class="pillar rv" style="--c:#ef5b6b"><b>02</b><h3>データサイエンス</h3><p>AIやICTを活用し、主観的な問いを客観的なエビデンスで実証するプロセスを確立します。</p></div>'
@@ -140,10 +149,10 @@ def p_inquiry():
 
 def p_frontier():
     pg = 'frontier-boost-program'; sa = after(pg, '高大連携事業', 1); ph = after(pg, '問いを立てる力', 1)
-    h = sec('UNIVERSITY', '高大連携事業 Summer Academia', f'<div class="two"><div class="rv prose">{paras(sa)}</div>{fig("fbp-00.jpg", "Summer Academia の体験講座")}</div>' + nums([('100', '名以上', '本校から毎年参加'), ('12', '学部', '体験講座を実施'), ('4', 'キャンパス', '白山・赤羽台・川越・朝霞'), ('2', '日間', '夏休みに実施')]))
+    h = sec('UNIVERSITY', '高大連携事業 Summer Academia', f'<div class="two"><div class="rv prose">{paras(sa)}</div>{gal(["fbp-00.jpg", "fbp-sa-kawagoe.jpg", "fbp-sa-asaka.jpg"], "Summer Academia の体験講座（理工学部・生命科学部ほか）")}</div>' + nums([('100', '名以上', '本校から毎年参加'), ('12', '学部', '体験講座を実施'), ('4', 'キャンパス', '白山・赤羽台・川越・朝霞'), ('2', '日間', '夏休みに実施')]))
     h += sec('PHILOSOPHY', '問いを立てる力 ～哲学シンキング～', f'<div class="two rev">{fig("fbp-01.jpg", "哲学シンキング講演会")}<div class="rv prose">{paras(ph)}</div></div>', 'soft')
     jour = ['哲学シンキング ①', '哲学シンキング ②', '哲学シンキング ③', 'データサイエンス教育 ①', 'データサイエンス教育 ②', 'データサイエンス教育 ③', 'データサイエンス教育 ④', '理系大学 施設見学', 'つくば市研究所 施設見学', '東洋大学 施設見学', '茨城大学農学部 インターンシップ', 'STEAM講座']
-    h += sec('SCIENCE FRONTIER CLASS', '理数フロンティアクラス プログラム', '<div class="two"><div class="rv"><p class="lede">長期研究型プロジェクト「フロンティアラボ」と、12回の「インサイトジャーニー」で構成します。</p><ol class="journey">' + ''.join(f'<li><b>{i + 1:02d}</b>{esc(j)}</li>' for i, j in enumerate(jour)) + f'</ol></div><div class="stack">{fig("fbp-03.jpg", "理科実験室での実習")}{fig("fbp-02.jpg", "理数フロンティアクラス プログラム一覧表", "plain")}</div></div><p class="rv"><a class="btn" href="https://sites.google.com/toyo.jp/science-frontier" target="_blank" rel="noopener">理数フロンティアクラスの紹介サイト ↗</a></p>')
+    h += sec('SCIENCE FRONTIER CLASS', '理数フロンティアクラス プログラム', '<div class="two"><div class="rv"><p class="lede">長期研究型プロジェクト「フロンティアラボ」と、12回の「インサイトジャーニー」で構成します。</p><ol class="journey">' + ''.join(f'<li><b>{i + 1:02d}</b>{esc(j)}</li>' for i, j in enumerate(jour)) + f'</ol></div><div class="stack">{gal(["fbp-03.jpg", "fbp-jukai.jpg", "fbp-camp.jpg"], "理科実験室での実習・樹海の溶岩洞窟での観察・サマーキャンプ")}{fig("fbp-02.jpg", "理数フロンティアクラス プログラム一覧表", "plain")}</div></div><p class="rv"><a class="btn" href="https://sites.google.com/toyo.jp/science-frontier" target="_blank" rel="noopener">理数フロンティアクラスの紹介サイト ↗</a></p>')
     h += sec('2026', '1期生の歩み', cards(['hrcamp', 'seminar', 'robot', 'steam', 'genai', 'camp']), 'navy')
     return h
 
@@ -159,6 +168,9 @@ AWARDS = [
 ]
 def p_achievements():
     h = sec('BY THE NUMBERS', '数字で見る成果', nums([('857', '件', '応募の中からグランプリ'), ('16', 'チーム', '全国大会で第3位'), ('45', '演題', '決勝進出から特別賞'), ('239', '校', 'が集う発表会に初参加')]), 'navy')
+    vid, start = YOUTUBE
+    h += sec('PRESENTATION', '研究発表とポスター', f'<div class="two"><div class="rv"><div class="video"><iframe src="https://www.youtube-nocookie.com/embed/{vid}?start={start}" title="SSH 研究発表の動画" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><p class="cap">第11回 全国ユース環境活動発表大会（全国大会）の動画です。2:56:30 から再生されます。</p></div>'
+          + gal(['ach-1-soy-poster.jpg', 'ach-2-nagae.jpg', 'ach-3-hallway.jpg', 'ach-4a-cert.jpg', 'ach-4b-cert.jpg'], '研究ポスター・掲示・表彰状', 'tallcar', fit=True) + '</div>', 'soft')
     h += sec('AWARDS', '主な受賞・選出', '<div class="awards">' + ''.join(f'<a class="award rv" href="{href("activities", "#" + i)}"{ext("activities")}><b>{esc(n)}</b><h3>{esc(t)}</h3><p>{esc(d)}</p><span>{AR[i]["date"]} ・ 記事を読む →</span></a>' for n, t, d, i in AWARDS if i in AR) + '</div>')
     h += sec('MATERIALS', '報告書・ルーブリックなど', f'<p class="lede rv">報告書やルーブリックなどの成果物は、完成しだいここに掲載します。研究発表のスライドは「研究開発実施報告書」のページで公開しています。</p><p class="rv"><a class="btn" href="{href("reports")}"{ext("reports")}>研究発表の資料を見る →</a></p>', 'soft')
     return h
@@ -196,7 +208,7 @@ def p_committee():
         return f'<li class="rv"><time>{int(m[2])}.{int(m[3]):02d}.{int(m[4]):02d}</time><b>{esc(m[1])}</b><span>{esc(m[5])}</span></li>' if m else f'<li class="rv"><b>{esc(l)}</b></li>'
     h = sec('MEMBERS', '2026年度 運営指導委員の先生方', f'<table class="members rv"><tbody>{rows}</tbody></table>')
     h += sec('SCHEDULE', '2026年度 日程', f'<ol class="tl">{"".join(li(l) for l in sched)}</ol>', 'soft')
-    if 'committee1' in AR: h += sec('REPORT', '第1回運営指導委員会の報告', f'<div class="prose rv narrow">{paras(AR["committee1"]["body"])}</div>')
+    if 'committee1' in AR: h += sec('REPORT', '第1回運営指導委員会の報告', f'<div class="two"><div class="prose rv">{paras(AR["committee1"]["body"])}</div>{fig("com-field.jpg", "運営指導委員の先生方による畑の見学")}</div>')
     return h
 
 def p_visits():
