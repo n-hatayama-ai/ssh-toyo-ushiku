@@ -13,9 +13,10 @@ BASE = 'https://sites.google.com/toyo.jp/test2026ssh/'
 PAGES = ['東洋大牛久の目指す探究教育', 'frontier-boost-program', 'ssh成果物', '探究活動の様々な取り組み', 'ssh普及発信活動',
          '研究開発実施報告書', '運営指導委員会', 'ssh先進校視察及び視察の受け入れ', 'ssh通信logos-ushiku']
 
-# 個人名を取り除く規則（記事が増えたらここに足す）
-SCRUB = [(r'出演するのは、3T6.*?の4名です。', ''), (r'に所属する3年の.*?の4人。', 'に所属する3年生4人。'), (r'今村さんと山田さん', '生徒2名')]
-DROP_LINE = re.compile(r'^東洋大学附属牛久高等学校[\s　]')           # 「学校名＋氏名」だけの行
+# 2026-11-14 方針変更: このサイトはJSTへの報告を兼ねるため、生徒氏名はGoogleサイトの記載どおり載せる。
+# 特定の文を取り除きたくなったときだけ SCRUB に (正規表現, 置換) を足す。
+SCRUB = []
+DROP_LINE = None                                                       # 以前は「学校名＋氏名」だけの行を落としていた
 SUSPECT = re.compile(r'さん[(（]\d+[)）]|\d[A-Z]\d+[\s　]')            # 氏名が残っていそうな形
 
 class P(HTMLParser):
@@ -63,7 +64,7 @@ class P(HTMLParser):
         if s.a: s.a[1].append(d)
 
 def scrub(line):
-    if DROP_LINE.match(line): return None
+    if DROP_LINE and DROP_LINE.match(line): return None
     for pat, rep in SCRUB: line = re.sub(pat, rep, line)
     return line.strip() or None
 
@@ -81,7 +82,7 @@ def main():
     (ROOT / 'content').mkdir(exist_ok=True)
     (ROOT / 'content/gsites.json').write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding='utf-8')
     if warn:
-        print('\n[要確認] 個人名が残っている可能性のある行:'); [print('  -', w) for w in warn]
+        print('\n[参考] 氏名を含む行（方針どおり掲載）:'); [print('  -', w) for w in warn]
     print('\n保存: content/gsites.json  → 次は python3 tools/build.py')
 
 if __name__ == '__main__': main()
