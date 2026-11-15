@@ -150,6 +150,19 @@
   .sec { position: relative; z-index: 3; padding: clamp(72px, 10vw, 130px) 6vw; }
   .sec.cream { background: var(--bg); color: var(--fg); } .sec.soft { background: var(--bg-soft); color: var(--fg); } .sec.navy { background: var(--dark); color: var(--dark-fg); }
   .sec .in { max-width: 1160px; margin: 0 auto; }
+  /* SSH紹介動画 */
+  .movie .in { display: grid; grid-template-columns: 1fr auto; gap: clamp(32px, 6vw, 96px); align-items: center; }
+  @media (max-width: 860px) { .movie .in { grid-template-columns: 1fr; justify-items: center; } .movie .txt { justify-self: stretch; } }
+  .movie .frame { position: relative; width: min(360px, 82vw); aspect-ratio: 9 / 16; border-radius: 22px; overflow: hidden; background: #000; box-shadow: 0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(246,239,220,.16); }
+  .movie video { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
+  .movie .snd { position: absolute; right: 12px; bottom: 12px; font: 700 12px var(--font-mono); letter-spacing: .06em; color: #fff; background: rgba(10,10,10,.62); border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 8px 14px; cursor: pointer; backdrop-filter: blur(6px); }
+  .movie .snd:hover, .movie .snd:focus-visible { background: var(--vivid-gold); color: var(--dark); outline: none; }
+  .movie .play { position: absolute; inset: 0; display: none; place-items: center; background: rgba(0,0,0,.28); border: 0; cursor: pointer; }
+  .movie .play span { width: 76px; height: 76px; border-radius: 50%; background: rgba(255,255,255,.92); display: grid; place-items: center; }
+  .movie .play span::before { content: ""; margin-left: 6px; border-style: solid; border-width: 14px 0 14px 22px; border-color: transparent transparent transparent var(--dark); }
+  .movie.paused .play { display: grid; }
+  .movie .ig { display: inline-block; margin-top: 6px; color: var(--vivid-gold); font-weight: 700; text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+  .movie .credit { margin-top: 22px; font: 400 11px var(--font-mono); letter-spacing: .08em; color: var(--dark-muted); }
   .sec .eyebrow { color: var(--accent); } .sec.navy .eyebrow { color: var(--vivid-gold); }
   .sec h2 { font-family: var(--font-mincho); font-weight: 900; font-size: clamp(26px, 3.8vw, 46px); line-height: 1.5; margin-bottom: 28px; }
   .sec p.body { font-size: clamp(14px, 1.15vw, 16px); line-height: 2.1; margin-bottom: 1.2em; }
@@ -254,6 +267,21 @@
   <img class="emb" src="assets/concept-emblem.png" alt="SSHエンブレム：総合知×データサイエンス">
   <div id="fallbackBody"></div>
 </div>
+
+<section class="sec navy movie" id="movie"><div class="in">
+  <div class="txt rv">
+    <p class="eyebrow">MOVIE</p>
+    <h2>30秒でわかる、<br>東洋大牛久のSSH</h2>
+    <p class="body">問う。確かめる。伝える。世界へ。挑戦。<br>文理融合型SSHで取り組む探究の姿を、30秒の映像にまとめました。</p>
+    <a class="ig" href="https://www.instagram.com/reel/DfwS82vorbf/" target="_blank" rel="noopener">Instagramで見る ↗</a>
+    <p class="credit">BGM：Nova Logos / MFP（OpenTracks）</p>
+  </div>
+  <div class="frame rv">
+    <video src="assets/movie/ssh-short.mp4" poster="assets/movie/ssh-short-poster.jpg" muted loop playsinline preload="metadata" aria-label="東洋大牛久のSSHを紹介する30秒の動画"></video>
+    <button class="play" type="button" aria-label="再生"><span></span></button>
+    <button class="snd" type="button">音を出す</button>
+  </div>
+</div></section>
 
 <section class="after" id="entrance">
   <p class="eyebrow">CONTENTS</p>
@@ -374,7 +402,7 @@ $('title').innerHTML = [['TOYO', ''], ['USHIKU', 'gold'], [' SSH', '']].map(([w,
 document.querySelectorAll('a[data-go]').forEach(a => { const [k, f] = a.dataset.go.split('#'), p = PG[k]; a.href = p.href + (p.external || !f ? '' : '#' + f); if (p.external) { a.target = '_blank'; a.rel = 'noopener'; } });
 // メニュー
 const menu = $('menu'), menuBtn = $('menuBtn');
-const PAGE = [['top', '冒頭', 'TOP', 0], ['ch0', '第1章 問う', 'CHAPTER 01', 1], ['ch1', '第2章 確かめる', 'CHAPTER 02', 1], ['ch2', '第3章 伝える', 'CHAPTER 03', 1], ['#entrance', 'ここから、探究の中へ', 'CONTENTS', 0], ['#numbers', '数字で見るSSH', 'NUMBERS', 0], ['#announcement', 'SSH指定のお知らせ', 'ANNOUNCEMENT', 0], ['#concept', '研究主題', 'CONCEPT', 0], ['#message', '校長メッセージ', 'MESSAGE', 0], ['#connect', '公式SNS', 'CONNECT', 0]];
+const PAGE = [['top', '冒頭', 'TOP', 0], ['ch0', '第1章 問う', 'CHAPTER 01', 1], ['ch1', '第2章 確かめる', 'CHAPTER 02', 1], ['ch2', '第3章 伝える', 'CHAPTER 03', 1], ['#movie', 'SSH紹介動画', 'MOVIE', 0], ['#entrance', 'ここから、探究の中へ', 'CONTENTS', 0], ['#numbers', '数字で見るSSH', 'NUMBERS', 0], ['#announcement', 'SSH指定のお知らせ', 'ANNOUNCEMENT', 0], ['#concept', '研究主題', 'CONCEPT', 0], ['#message', '校長メッセージ', 'MESSAGE', 0], ['#connect', '公式SNS', 'CONNECT', 0]];
 $('menuPage').innerHTML = PAGE.map((m, i) => `<li style="--i:${i}" class="${m[3] ? 'only-3d' : ''}"><a href="${m[0][0] === '#' ? m[0] : '#'}" data-go="${m[0]}">${m[1]}<small>${m[2]}</small></a></li>`).join('');
 $('menuContents').innerHTML = CONTENTS.map((c, i) => `<li style="--i:${i + 2}"><a ${link(c[2])}>${c[0]}<small>${c[1]}</small></a></li>`).join('');
 const setMenu = on => { menu.classList.toggle('open', on); menuBtn.setAttribute('aria-expanded', on); menuBtn.textContent = on ? 'CLOSE' : 'MENU'; };
@@ -701,6 +729,28 @@ function frame() {
 }
 frame();
 window.__ready = true;
+</script>
+<script>
+// SSH紹介動画：見えている間だけ消音で自動再生。音はボタンで出す。視差効果を減らす設定では自動再生しない
+(() => {
+  const sec = document.getElementById('movie'); if (!sec) return;
+  const v = sec.querySelector('video'), snd = sec.querySelector('.snd'), play = sec.querySelector('.play');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let userPaused = false;
+  const sync = () => { sec.classList.toggle('paused', v.paused); snd.textContent = v.muted ? '音を出す' : '音を消す'; snd.setAttribute('aria-pressed', String(!v.muted)); };
+  const start = () => { userPaused = false; v.play().catch(() => {}); };
+  if (!reduce && 'IntersectionObserver' in window) {
+    new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting && !userPaused) v.play().catch(() => {});
+      else if (!e.isIntersecting) v.pause();
+    }), { threshold: 0.5 }).observe(v);
+  }
+  snd.addEventListener('click', () => { v.muted = !v.muted; if (v.paused) start(); sync(); });
+  play.addEventListener('click', start);
+  v.addEventListener('click', () => { if (v.paused) start(); else { userPaused = true; v.pause(); } });
+  v.addEventListener('play', sync); v.addEventListener('pause', sync); v.addEventListener('volumechange', sync);
+  sync();
+})();
 </script>
 </body>
 </html>
