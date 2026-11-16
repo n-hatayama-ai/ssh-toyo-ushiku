@@ -260,6 +260,7 @@ def render(i):
 <meta property="og:image" content="{BASE_URL}assets/hero-enryo.jpg"><meta name="twitter:card" content="summary_large_image">
 {FONTS}
 <link rel="stylesheet" href="sub.css">
+<script data-goatcounter="https://ssh-toyo-ushiku.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body style="--pc:{color}">
 <!-- このファイルは tools/build.py が生成します。直接編集しないでください。 -->
