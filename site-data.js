@@ -78,6 +78,7 @@ window.SSH_SITE = {
  },
  "articles": {
   "jica2026": true,
+  "ritsumeikan": true,
   "jsse": true,
   "coolearth": true,
   "camp": true,

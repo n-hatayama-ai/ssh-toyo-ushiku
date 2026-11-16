@@ -216,7 +216,7 @@ def p_visits():
     recs = [re.match(r'(\d+)年(\d+)月(\d+)日[\s　]*(.+)', l.translate(z)) for l in flat(pg)]
     tl = ''.join(f'<li class="rv {"in" if "受け入れ" in m[4] else ""}"><time>{int(m[1])}.{int(m[2]):02d}.{int(m[3]):02d}</time><b>{esc(m[4])}</b><span>{"受け入れ" if "受け入れ" in m[4] else "視察"}</span></li>' for m in recs if m)
     h = sec('RECORD', '視察と受け入れの記録', f'<div class="two"><ol class="tl">{tl}</ol>{fig("vis-00.jpg", "本校の生徒たち")}</div>')
-    h += sec('REPORTS', '視察・受け入れの報告', cards(['nagoya', 'kengikai', 'fuji']), 'navy')
+    h += sec('REPORTS', '視察・受け入れの報告', cards(['ritsumeikan', 'nagoya', 'kengikai', 'fuji']), 'navy')
     return h
 
 def p_logos():
