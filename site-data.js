@@ -77,6 +77,7 @@ window.SSH_SITE = {
   }
  },
  "articles": {
+  "tankyuday2026": true,
   "jica2026": true,
   "ritsumeikan": true,
   "jsse": true,
