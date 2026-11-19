@@ -184,6 +184,20 @@
   .theme { font-family: var(--font-mincho); font-weight: 900; font-size: clamp(28px, 4.6vw, 62px); line-height: 1.45; margin-bottom: 36px; }
   .theme em { font-style: normal; color: var(--accent); } .theme i { font-style: normal; color: var(--vivid-coral); }
   .tri { background: #fff; padding: clamp(10px, 2vw, 22px); margin-top: 40px; }
+  .pulse { max-width: 680px; margin: 48px auto 0; }
+  /* 研究主題：動画→静止図をスクロールで入れ替え（JSが .on を付けたときだけ。無いときは縦に並ぶ） */
+  .swap.on { height: 250vh; margin-top: 8px; }
+  .swap.on .swap-pin { position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; place-items: center; }
+  .swap.on .swap-pin > figure { grid-area: 1 / 1; margin: 0; will-change: opacity, transform; }
+  .swap.on .pulse { width: min(680px, 100%, calc(72vh * 1.185)); max-width: none; opacity: calc(1 - var(--k, 0)); transform: scale(calc(1 - .08 * var(--k, 0))); }
+  .swap.on .tri { width: min(1000px, 100%); opacity: var(--k, 0); transform: scale(calc(.94 + .06 * var(--k, 0))); }
+  .swap.on.shown-tri .pulse, .swap.on:not(.shown-tri) .tri { pointer-events: none; }
+  .swap .hint { position: absolute; left: 50%; bottom: 4vh; transform: translateX(-50%); font: 400 11px var(--font-mono); letter-spacing: .12em; color: var(--muted); opacity: calc(1 - var(--k, 0) * 3); display: none; }
+  .swap.on .hint { display: block; }
+  .pulse .stage { position: relative; aspect-ratio: 960 / 810; background: #0d1a30 url(assets/movie/concept-poster.jpg) center / cover; overflow: hidden; box-shadow: 0 24px 60px rgba(13,26,48,.22); }
+  .pulse video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity .2s; }
+  .pulse .loop, .pulse.looping .intro { opacity: 0; } .pulse.looping .loop { opacity: 1; }
+  .pulse figcaption { text-align: center; }
   .why { font-family: var(--font-mincho); font-weight: 900; font-size: clamp(40px, 8vw, 112px); line-height: 1.15; color: var(--vivid-gold); margin-bottom: 36px; }
   .why span { display: inline-block; opacity: 0; transform: translateY(.4em); transition: transform .9s var(--ease), opacity .9s; transition-delay: calc(var(--i) * 260ms + .2s); }
   .rv.in-view .why span, .why.in-view span { opacity: 1; transform: none; }
@@ -325,7 +339,17 @@
     <p class="body">東洋大学の「総合知」を核に、吉田幸司氏提唱の哲学シンキングとデータ・ＡＩ活用を融合した文理融合プログラムを展開し、生徒の問いを立てる力と科学的解決能力を育成する。</p>
     <p class="body">これにより、人文社会科学的テーマを科学的視点で深く「読み解く力」を養い、地域から地球規模の課題解決に挑戦し、未来を切り拓く人材を育成する。</p>
   </div>
-  <figure class="tri rv"><img src="assets/concept-triangle.jpg" alt="TOYO USHIKU 文理融合SSHモデル図：哲学シンキング・Data Science・グローバル教育の三要素が「総合知」を中心に循環する概念図" loading="lazy"><figcaption>総合知トライアングル ― 哲学シンキング × Data Science × グローバル教育</figcaption></figure>
+  <div class="swap" id="conceptSwap"><div class="swap-pin">
+  <figure class="pulse" id="conceptPulse">
+    <div class="stage" role="img" aria-label="哲学シンキング・Data Science・グローバル教育の三つの柱が集まって三角形をつくり、中心の「総合知」が脈打つアニメーション">
+      <video class="intro" muted playsinline preload="metadata" aria-hidden="true"><source src="assets/movie/concept-intro.webm" type="video/webm"><source src="assets/movie/concept-intro.mp4" type="video/mp4"></video>
+      <video class="loop" muted loop playsinline preload="none" aria-hidden="true"><source src="assets/movie/concept-loop.webm" type="video/webm"><source src="assets/movie/concept-loop.mp4" type="video/mp4"></video>
+    </div>
+    <figcaption>三つの柱が集まり、「総合知」が脈打つ</figcaption>
+  </figure>
+  <figure class="tri"><img src="assets/concept-triangle.jpg" alt="TOYO USHIKU 文理融合SSHモデル図：哲学シンキング・Data Science・グローバル教育の三要素が「総合知」を中心に循環する概念図" loading="lazy"><figcaption>総合知トライアングル ― 哲学シンキング × Data Science × グローバル教育</figcaption></figure>
+  <p class="hint" aria-hidden="true">SCROLL ↓</p>
+  </div></div>
 </div></section>
 
 <section class="sec navy" id="message"><div class="in">
@@ -751,6 +775,36 @@ window.__ready = true;
   v.addEventListener('click', () => { if (v.paused) start(); else { userPaused = true; v.pause(); } });
   v.addEventListener('play', sync); v.addEventListener('pause', sync); v.addEventListener('volumechange', sync);
   sync();
+})();
+</script>
+<script>
+// 研究主題：最初は動画（三本柱が集まる導入→鼓動ループ）。スクロールに従って静止図へ入れ替わる。
+// 視差効果を減らす設定では動画は完成形の静止画のまま（入れ替えは不透明度だけなので行う）
+(() => {
+  const sw = document.getElementById('conceptSwap'), f = document.getElementById('conceptPulse'); if (!sw || !f) return;
+  const intro = f.querySelector('.intro'), loop = f.querySelector('.loop');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  sw.classList.add('on');
+  let started = false, visible = false, k = 0;
+  const toLoop = () => loop.play().catch(() => {}).finally(() => f.classList.add('looping'));
+  intro.addEventListener('ended', toLoop);
+  const sync = () => {
+    const show = visible && k < 1 && !reduce;
+    if (!show) { intro.pause(); loop.pause(); return; }
+    if (!started) { started = true; loop.preload = 'auto'; loop.load(); intro.play().catch(toLoop); }
+    else (f.classList.contains('looping') ? loop : intro).play().catch(() => {});
+  };
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const r = sw.getBoundingClientRect(), total = r.height - innerHeight;
+    const p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
+    k = Math.min(1, Math.max(0, (p - 0.38) / 0.3));
+    sw.style.setProperty('--k', k.toFixed(3)); sw.classList.toggle('shown-tri', k > 0.5);
+    visible = r.top < innerHeight * 0.6 && r.bottom > innerHeight * 0.4; sync();
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener('resize', update); update();
 })();
 </script>
 </body>
