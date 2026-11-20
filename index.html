@@ -186,8 +186,14 @@
   .tri { background: #fff; padding: clamp(10px, 2vw, 22px); margin-top: 40px; }
   .pulse { max-width: 680px; margin: 48px auto 0; }
   /* 研究主題：動画→静止図をスクロールで入れ替え（JSが .on を付けたときだけ。無いときは縦に並ぶ） */
-  .swap.on { height: 250vh; margin-top: 8px; }
-  .swap.on .swap-pin { position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; place-items: center; }
+  /* 固定中は画面幅いっぱいの暗い舞台（動画の背景色に合わせる）。図に入れ替わるにつれてクリーム色へ戻る */
+  #concept { overflow-x: clip; }
+  .swap.on { position: relative; height: 250vh; margin-top: 22vh; }
+  .swap.on::before { content: ""; position: absolute; left: 50%; width: 100vw; transform: translateX(-50%); top: -22vh; height: 22vh; background: linear-gradient(to bottom, rgba(3,6,13,0), #03060d); pointer-events: none; }
+  .swap.on .swap-pin { position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; place-items: center; isolation: isolate; }
+  .swap.on .swap-pin::before { content: ""; position: absolute; z-index: -1; left: 50%; width: 100vw; transform: translateX(-50%); top: 0; bottom: 0; background: rgba(3,6,13, calc(1 - var(--k, 0))); }
+  .swap.on .pulse figcaption, .swap.on .hint { color: rgba(246,239,220,.62); }
+  .swap.on .pulse .stage { background-color: #03060d; box-shadow: none; -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent), linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent); -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent), linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent); mask-composite: intersect; }
   .swap.on .swap-pin > figure { grid-area: 1 / 1; margin: 0; will-change: opacity, transform; }
   .swap.on .pulse { width: min(680px, 100%, calc(72vh * 1.185)); max-width: none; opacity: calc(1 - var(--k, 0)); transform: scale(calc(1 - .08 * var(--k, 0))); }
   .swap.on .tri { width: min(1000px, 100%); opacity: var(--k, 0); transform: scale(calc(.94 + .06 * var(--k, 0))); }
