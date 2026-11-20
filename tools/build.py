@@ -29,6 +29,8 @@ PAGES = [
  ('visits', 'SSH先進校視察・受け入れ', 'SCHOOL VISITS', '他校に学び、本校の取り組みを見ていただく。', '#f0b93e', 'ssh先進校視察及び視察の受け入れ'),
  ('logos', 'SSH通信「LOGOS Ushiku」', 'NEWSLETTER', '哲学 × データサイエンスで未来を読み解く SSH News。', '#ef5b6b', 'ssh通信logos-ushiku'),
 ]
+# サイト独自のページ（Googleサイトに元がない）。本文は content/<slug>.html を読む
+EXTRA = [('characters', '東洋大牛久 SSHキャラクター', 'CHARACTERS', '問いを立てるフクロウ「フィロ」と、データで確かめるカッパ「ぬまっぱ博士」。2人が探究を案内します。', '#2fd0a8')]
 AUD = dict(inquiry='junior edu', activities='junior student', frontier='junior student', logos='junior student', achievements='junior student edu',
            outreach='edu', reports='edu', committee='edu', visits='edu')
 ORDER = ['inquiry', 'activities', 'frontier', 'logos', 'achievements', 'outreach', 'reports', 'committee', 'visits']   # トップの一覧での並び
@@ -235,16 +237,18 @@ def p_logos():
 BODY = dict(inquiry=p_inquiry, frontier=p_frontier, achievements=p_achievements, activities=p_activities, outreach=p_outreach, reports=p_reports, committee=p_committee, visits=p_visits, logos=p_logos)
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500;700;900&family=Zen+Old+Mincho:wght@400;600;900&family=Plus+Jakarta+Sans:wght@700;800&family=Fragment+Mono&display=swap" rel="stylesheet">'
 
-def render(i):
-    slug, jp, en, lead, color, gname = PAGES[i]
+def render(i, extra=None):
+    if extra: slug, jp, en, lead, color = extra; gname = None
+    else: slug, jp, en, lead, color, gname = PAGES[i]
     random.seed(slug)
     dots = ''.join(f'<i style="left:{random.randint(2, 98)}%;top:{random.randint(6, 92)}%;--s:{random.randint(4, 11)}px;--d:{random.uniform(5, 11):.1f}s;--c:{random.choice(["#f0b93e", "#ef5b6b", "#2fd0a8", "#5b9df0"])}"></i>' for _ in range(22))
     menu = ''.join(f'<li style="--i:{k}"><a href="{href(p[0])}"{ext(p[0])}{" aria-current=page" if k == i else ""}>{esc(p[1])}<small>{k + 1:02d} — {p[2]}</small></a></li>' for k, p in enumerate(PAGES))
-    loc = [p for p in PAGES if is_local(p[0])]; j = loc.index(PAGES[i]); prev, nxt = loc[j - 1], loc[(j + 1) % len(loc)]
+    loc = [p for p in PAGES if is_local(p[0])]
+    if not extra: j = loc.index(PAGES[i]); prev, nxt = loc[j - 1], loc[(j + 1) % len(loc)]
     k = 0; words = []
     for w in jp.split(' '):
         words.append('<span class="w">' + ''.join(f'<span style="--i:{k + n}">{esc(c)}</span>' for n, c in enumerate(w)) + '</span>'); k += len(w)
-    title = f'{jp}｜TOYO USHIKU SSH'; url = BASE_URL + slug + '.html'
+    title = f"{jp.replace(' ', '') if extra else jp}｜TOYO USHIKU SSH"; url = BASE_URL + slug + '.html'
     return f'''<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -266,15 +270,15 @@ def render(i):
 <!-- このファイルは tools/build.py が生成します。直接編集しないでください。 -->
 <header class="top"><a class="brand" href="./"><b>SSH</b>東洋大学附属牛久中学校・高等学校</a></header>
 <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu">MENU</button>
-<nav class="menu" id="menu" aria-label="メニュー"><div class="cols"><div><h3>CONTENTS</h3><ul>{menu}</ul></div><div><h3>TOP</h3><ul><li style="--i:2"><a href="./">トップページ<small>HOME</small></a></li><li style="--i:3"><a href="https://www.toyo.ac.jp/ushiku/" target="_blank" rel="noopener">学校公式サイト ↗<small>TOYO USHIKU</small></a></li></ul></div></div></nav>
+<nav class="menu" id="menu" aria-label="メニュー"><div class="cols"><div><h3>CONTENTS</h3><ul>{menu}</ul></div><div><h3>TOP</h3><ul><li style="--i:2"><a href="./">トップページ<small>HOME</small></a></li><li style="--i:3"><a href="characters.html"{' aria-current=page' if extra else ''}>東洋大牛久SSHキャラクター<small>CHARACTERS</small></a></li><li style="--i:4"><a href="https://www.toyo.ac.jp/ushiku/" target="_blank" rel="noopener">学校公式サイト ↗<small>TOYO USHIKU</small></a></li></ul></div></div></nav>
 <div class="hero"><div class="dots" aria-hidden="true">{dots}</div><div class="in">
-  <p class="eyebrow">{i + 1:02d} / {len(PAGES):02d} — {en}</p>
+  <p class="eyebrow">{'SPECIAL' if extra else f'{i + 1:02d} / {len(PAGES):02d}'} — {en}</p>
   <h1 aria-label="{esc(jp)}">{' '.join(words)}</h1>
   <p class="lead">{esc(lead)}</p>
 </div></div>
-<main>{BODY[slug]()}</main>
-<p class="gs"><a href="{gs_url(gname)}" target="_blank" rel="noopener">このページの Googleサイト版を見る ↗</a></p>
-<nav class="pager" aria-label="前後のページ"><a href="{prev[0]}.html"><small>← PREV</small>{esc(prev[1])}</a><a href="./#entrance"><small>CONTENTS</small>一覧へ</a><a href="{nxt[0]}.html"><small>NEXT →</small>{esc(nxt[1])}</a></nav>
+<main>{(ROOT / f'content/{slug}.html').read_text(encoding='utf-8') if extra else BODY[slug]()}</main>
+{'' if extra else f'<p class="gs"><a href="{gs_url(gname)}" target="_blank" rel="noopener">このページの Googleサイト版を見る ↗</a></p>'}
+{'<nav class="pager" aria-label="前後のページ"><a href="./"><small>← HOME</small>トップページ</a><a href="./#entrance"><small>CONTENTS</small>一覧へ</a><a href="inquiry.html"><small>NEXT →</small>東洋大牛久の目指す探究教育</a></nav>' if extra else f'<nav class="pager" aria-label="前後のページ"><a href="{prev[0]}.html"><small>← PREV</small>{esc(prev[1])}</a><a href="./#entrance"><small>CONTENTS</small>一覧へ</a><a href="{nxt[0]}.html"><small>NEXT →</small>{esc(nxt[1])}</a></nav>'}
 <footer class="foot"><div class="in">
   <div class="id"><img src="assets/school-crest.png" alt="東洋大学附属牛久中学校・高等学校 校章"><div><span>TOYO UNIV. USHIKU</span><b>東洋大学附属牛久中学校・高等学校</b><span>スーパーサイエンスハイスクール特設サイト</span></div></div>
   <a class="topl" href="https://www.toyo.ac.jp/ushiku/" target="_blank" rel="noopener">東洋大学附属牛久中学校・高等学校 TOPへ ↗</a>
@@ -290,6 +294,8 @@ for i, p in enumerate(PAGES):
     f = ROOT / f'{p[0]}.html'
     if is_local(p[0]): f.write_text(render(i), encoding='utf-8'); made.append(p[0])
     elif f.exists(): f.unlink()
+for e in EXTRA:
+    (ROOT / f'{e[0]}.html').write_text(render(None, e), encoding='utf-8'); made.append(e[0])
 
 # トップページが読む設定（一覧・メニュー・写真の行き先）
 data = {p[0]: dict(title=p[1], en=p[2].title(), href=href(p[0]), external=not is_local(p[0]), aud=AUD[p[0]]) for p in PAGES}

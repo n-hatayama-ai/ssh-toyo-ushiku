@@ -435,7 +435,7 @@ document.querySelectorAll('a[data-go]').forEach(a => { const [k, f] = a.dataset.
 const menu = $('menu'), menuBtn = $('menuBtn');
 const PAGE = [['top', '冒頭', 'TOP', 0], ['ch0', '第1章 問う', 'CHAPTER 01', 1], ['ch1', '第2章 確かめる', 'CHAPTER 02', 1], ['ch2', '第3章 伝える', 'CHAPTER 03', 1], ['#movie', 'SSH紹介動画', 'MOVIE', 0], ['#entrance', 'ここから、探究の中へ', 'CONTENTS', 0], ['#numbers', '数字で見るSSH', 'NUMBERS', 0], ['#announcement', 'SSH指定のお知らせ', 'ANNOUNCEMENT', 0], ['#concept', '研究主題', 'CONCEPT', 0], ['#message', '校長メッセージ', 'MESSAGE', 0], ['#connect', '公式SNS', 'CONNECT', 0]];
 $('menuPage').innerHTML = PAGE.map((m, i) => `<li style="--i:${i}" class="${m[3] ? 'only-3d' : ''}"><a href="${m[0][0] === '#' ? m[0] : '#'}" data-go="${m[0]}">${m[1]}<small>${m[2]}</small></a></li>`).join('');
-$('menuContents').innerHTML = CONTENTS.map((c, i) => `<li style="--i:${i + 2}"><a ${link(c[2])}>${c[0]}<small>${c[1]}</small></a></li>`).join('');
+$('menuContents').innerHTML = CONTENTS.map((c, i) => `<li style="--i:${i + 2}"><a ${link(c[2])}>${c[0]}<small>${c[1]}</small></a></li>`).join('') + `<li style="--i:${CONTENTS.length + 2}"><a href="characters.html">東洋大牛久SSHキャラクター<small>CHARACTERS</small></a></li>`;
 const setMenu = on => { menu.classList.toggle('open', on); menuBtn.setAttribute('aria-expanded', on); menuBtn.textContent = on ? 'CLOSE' : 'MENU'; };
 menuBtn.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
 const goTo = k => {

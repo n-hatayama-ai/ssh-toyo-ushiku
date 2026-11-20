@@ -14,6 +14,7 @@
 python3 tools/sync_gsites.py   # Googleサイトを取り込む → content/gsites.json
 python3 tools/build.py         # 下層9ページ・site-data.js・sitemap.xml・robots.txt を生成
 python3 -m http.server 8792    # http://127.0.0.1:8792/ で確認してから公開（push）
+# Windows では python3 を python に読み替える
 ```
 
 生成のあとに出る［お知らせ］に、新しい記事・未設定の項目・見つからない見出しが並ぶ。
@@ -29,6 +30,9 @@ python3 -m http.server 8792    # http://127.0.0.1:8792/ で確認してから公
 | トップページ（3D・章の文章・数字） | `index.html` |
 | 下層ページの見た目 | `sub.css` / `sub.js` |
 | 記事の写真 | `assets/news/`　SSH通信の表紙: `assets/logos/noN.jpg` |
+| 東洋大牛久SSHキャラクターのページ（characters.html）の文章 | `content/characters.html`（`tools/build.py` で包んで生成） |
+| キャラクターの掛け合い（セリフ・動き） | `assets/chara/stage.js` の `SCENES`。確認は `characters.html?scene=data&t=1&pause` のように場面を指定できる |
+| キャラクターの3Dの形 | `assets/chara/chara3d.js`（元は非公開リポジトリ ssh-characters の `chara.js`。そちらで `tools/sync_to_site.py` を実行して作り直す）・イラストは `assets/chara/*.webp` |
 | 記事の写真を複数枚に（カルーセル） | `content/articles.json` の記事に `"imgs": ["a.jpg", "b.jpg"]` を足す |
 
 `inquiry.html` などの下層ページ、`site-data.js`、`sitemap.xml`、`robots.txt` は生成物。直接編集しない。
