@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>フィロと博士の学校案内｜TOYO USHIKU SSH（試作）</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Fragment+Mono&display=swap" rel="stylesheet">
+<style>
+/* 試作：答えはすべて下の QA に書いたものだけを出す（その場でAIが文章を作ることはない） */
+:root {
+  --bg: #f7f2e6; --bg-soft: #ece1c9; --fg: #172443; --muted: #5c6270; --line: rgba(23,36,67,.14);
+  --dark: #0d1a30; --dark-fg: #f6efdc; --gold: #f0b93e; --teal: #2fd0a8;
+  --philo: #2f4a8a; --philo-soft: #e3ebfb; --numa: #1fa583; --numa-soft: #dff7ee;
+  --font: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif; --mono: 'Fragment Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font); line-height: 1.75; display: flex; flex-direction: column; }
+.proto { background: #c4374a; color: #fff; font-size: 12px; text-align: center; padding: 5px 16px; }
+header { background: var(--dark); color: var(--dark-fg); padding: 14px 16px 0; }
+header .in { max-width: 760px; margin: 0 auto; display: flex; align-items: flex-end; gap: 14px; }
+header .duo { display: flex; flex: 0 0 auto; }
+header .duo img { width: 76px; height: 76px; object-fit: contain; display: block; }
+header .duo img + img { margin-left: -14px; }
+header .tt { padding-bottom: 12px; }
+header .eyebrow { font: 11px var(--mono); letter-spacing: .26em; color: var(--teal); }
+header h1 { font-size: clamp(18px, 4.4vw, 24px); font-weight: 900; line-height: 1.35; }
+header p { font-size: 12px; color: #a6a48d; }
+
+main { flex: 1; overflow-y: auto; padding: 18px 16px 8px; }
+#log { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.msg { display: flex; gap: 10px; align-items: flex-start; animation: in .35s cubic-bezier(.16,.84,.24,1); }
+@keyframes in { from { opacity: 0; transform: translateY(8px); } }
+.msg .face { flex: 0 0 48px; height: 48px; border-radius: 50%; overflow: hidden; }
+.msg.philo .face { background: var(--philo-soft); }
+.msg.numa .face { background: var(--numa-soft); }
+.msg .face img { width: 100%; height: 100%; object-fit: contain; }
+.msg .body { max-width: min(560px, calc(100% - 58px)); }
+.msg .who { font-size: 11px; font-weight: 700; margin-bottom: 2px; }
+.msg.philo .who { color: var(--philo); } .msg.numa .who { color: var(--numa); }
+.msg .bubble { background: #fff; border: 1px solid var(--line); border-radius: 4px 16px 16px 16px; padding: 9px 14px; font-size: 15px; }
+.msg.philo .bubble { border-left: 4px solid var(--philo); }
+.msg.numa .bubble { border-left: 4px solid var(--numa); }
+.msg .bubble a { color: var(--philo); font-weight: 700; }
+.msg .bubble ul { padding-left: 1.2em; margin: 4px 0; }
+.msg.user { justify-content: flex-end; }
+.msg.user .bubble { background: var(--fg); color: var(--dark-fg); border: 0; border-radius: 16px 4px 16px 16px; }
+.typing .bubble { color: var(--muted); letter-spacing: .3em; }
+.links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.links a { font-size: 12.5px; text-decoration: none; background: var(--gold); color: var(--dark) !important; padding: 3px 11px; border-radius: 99px; }
+.src { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+footer { background: var(--bg-soft); border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); }
+footer .in { max-width: 760px; margin: 0 auto; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
+.chips button { flex: 0 0 auto; font: 700 13px var(--font); padding: 7px 13px; border: 1px solid var(--line); border-radius: 99px; background: #fff; color: var(--fg); cursor: pointer; }
+.chips button:hover, .chips button:focus-visible { background: var(--fg); color: var(--dark-fg); outline: none; }
+form { display: flex; gap: 8px; }
+form input { flex: 1; min-width: 0; font: 16px var(--font); padding: 10px 14px; border: 1px solid var(--line); border-radius: 99px; background: #fff; color: var(--fg); }
+form input:focus { outline: 2px solid var(--philo); outline-offset: 1px; }
+form button { font: 700 14px var(--font); padding: 0 18px; border: 0; border-radius: 99px; background: var(--philo); color: #fff; cursor: pointer; }
+@media (max-width: 480px) { header .duo img { width: 56px; height: 56px; } header .tt p:last-child { display: none; } header .tt { padding-bottom: 8px; } }
+.note { font-size: 11px; color: var(--muted); margin-top: 6px; }
+.tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-bottom: 8px; }
+.tabs button { font: 700 12px var(--font); padding: 5px 2px; white-space: nowrap; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--fg); border-color: var(--philo); }
+.sugg { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.sugg button { font: 700 12.5px var(--font); padding: 4px 11px; border: 1px solid var(--line); border-radius: 99px; background: var(--bg); color: var(--fg); cursor: pointer; }
+.sugg button:hover, .sugg button:focus-visible { background: var(--fg); color: var(--dark-fg); outline: none; }
+.sugg-label { font-size: 11px; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+<p class="proto">試作（非公開）：キャラクターは校内未承認です。答えの内容は先生方の確認が必要です。</p>
+<header>
+  <div class="in">
+    <div class="duo">
+      <img src="assets/chara/philo.webp" alt="フィロ">
+      <img src="assets/chara/numappa.webp" alt="ぬまっぱ博士">
+    </div>
+    <div class="tt">
+      <p class="eyebrow">ASK PHILO &amp; NUMAPPA</p>
+      <h1>フィロとぬまっぱ博士の学校案内</h1>
+      <p>東洋大牛久のこと、SSHのこと、2人に聞いてみよう。</p>
+    </div>
+  </div>
+</header>
+
+<main id="scroll"><div id="log" aria-live="polite"></div></main>
+
+<footer>
+  <div class="in">
+    <div class="tabs" id="tabs" role="tablist" aria-label="質問の分類"></div>
+    <div class="chips" id="chips"></div>
+    <form id="ask">
+      <input id="q" type="text" placeholder="質問を書いてね（例：自転車で通える？）" autocomplete="off" aria-label="質問">
+      <button type="submit">聞く</button>
+    </form>
+    <p class="note">答えはあらかじめ用意したものです。入試・学費・日程は必ず学校公式サイトで確認してください。</p>
+  </div>
+</footer>
+
+<script>
+// 試作：答えはすべてこの QA に書いたものだけを出す（その場でAIが文章を作ることはない）
+// 話し手: p = フィロ（ていねい語、うれしいときだけ「〜ホー」）、n = ぬまっぱ博士（「〜っぱ」）
+// 出典: SSH特設サイト、学校公式サイト（https://www.toyo.ac.jp/ushiku/ 、2026-11-22 時点）
+const OFFICIAL = 'https://www.toyo.ac.jp/ushiku/';
+const CATS = [
+  ['ssh', 'SSH・探究'],
+  ['school', 'コース・進路'],
+  ['life', '学校生活'],
+  ['visit', '見学・入試'],
+];
+const QA = [
+  // ───── SSH・探究 ─────
+  { id: 'ssh', cat: 'ssh', chip: 'SSHって何？',
+    keys: ['ssh', 'スーパーサイエンス', 'すーぱーさいえんす', 'えすえすえいち', '指定', 'してい'],
+    say: [
+      ['p', 'SSH（スーパーサイエンスハイスクール）は、文部科学省が「未来の科学を担う人を育てる学校」として指定する制度です。'],
+      ['n', '東洋大牛久は2026年度から5年間の指定を受けたっぱ！ しかも「文理融合基礎枠」で、この年に選ばれたのは全国でたった3校なんだっぱ。'],
+      ['p', 'この年の新しい指定は全国で47校。茨城県では8校目のSSHです。いい問いだホー！'] ],
+    links: [['SSH特設サイト', './']], rel: ['feature', 'bunkei', 'research'] },
+
+  { id: 'feature', cat: 'ssh', chip: 'どんなことを学ぶの？',
+    keys: ['特徴', 'とくちょう', '学ぶ', 'まなぶ', '研究主題', 'テーマ', '総合知', 'そうごうち', '探究', 'たんきゅう'],
+    say: [
+      ['p', 'テーマは「哲学的思考を基盤とした『総合知×データサイエンス』」です。柱は3つあります。'],
+      ['n', '<ul><li><b>哲学シンキング</b>：全部の教科で、本質的な問いを立てる</li><li><b>データサイエンス</b>：AIやICTを使って、データで確かめる</li><li><b>社会への実装と発信</b>：地域の課題解決や世界への発信につなげる</li></ul>'],
+      ['p', '「問う → 確かめる → 伝える」。わたしたち2人の役割そのものなんですよ。'] ],
+    links: [['目指す探究教育', 'inquiry.html']], rel: ['philosophy', 'datasci', 'research'] },
+
+  { id: 'philosophy', cat: 'ssh', chip: '哲学シンキングって？',
+    keys: ['哲学', 'てつがく', 'シンキング', 'しんきんぐ', '問い', 'とい', 'なぜ', '考える', 'かんがえる'],
+    say: [
+      ['p', 'わたしの得意分野です！ ものごとを表面だけで見ないで、「なぜそうなのか」「本当に大切なものは何か」と問いを重ねていく考え方です。'],
+      ['p', '哲学を事業の中心にした会社「クロス・フィロソフィーズ」の吉田幸司先生を招いて、「ゲノム編集技術のELSI（倫理的・法的・社会的な課題）」をテーマにした特別授業もありました。'],
+      ['n', 'AIに聞けばすぐ答えが出る時代だからこそ、「自分で考える」が大事なんだっぱ。'] ],
+    links: [['目指す探究教育', 'inquiry.html']], rel: ['datasci', 'spirit'] },
+
+  { id: 'datasci', cat: 'ssh', chip: 'データサイエンスって何するの？',
+    keys: ['データ', 'でーた', 'サイエンス', 'さいえんす', 'ai', '人工知能', '生成ai', 'ict', 'プログラミング', 'ぷろぐらみんぐ', '統計', 'とうけい', 'パソコン', 'ぱそこん', 'chromebook', 'クロームブック', 'タブレット'],
+    say: [
+      ['n', 'ぼくの出番だっぱ！ 問いを、観察・実験・アンケートなどのデータで確かめる方法を学ぶっぱ。'],
+      ['n', '1年生全員が受けた「農業データサイエンス」の講演や、生徒と先生が一緒に学んだ「生成AI特別講座」もあったっぱ。'],
+      ['p', '中学校から一人一台のChromebookを使っていて、校内にはWi-Fi、全部の教室にプロジェクターがあります。'] ],
+    links: [['目指す探究教育', 'inquiry.html']], rel: ['research', 'lecture'] },
+
+  { id: 'bunkei', cat: 'ssh', chip: '文系でも関係ある？',
+    keys: ['文系', 'ぶんけい', '理系', 'りけい', '苦手', 'にがて', '数学', 'すうがく', '理科', 'りか', '文理', 'ぶんり'],
+    say: [
+      ['p', 'あります。東洋大牛久のSSHは、理系だけの取り組みではなく「文理融合型」です。'],
+      ['n', '文系の疑問を理系が解き明かしたり、理系の結果を文系がまとめたり。校長先生も「様々な入口はある」と言っているっぱ。'],
+      ['p', 'カウンセリングの利用率や発達障害のとらえ方など、人や社会をテーマにした生徒の研究もありますよ。'] ],
+    links: [['校長メッセージ（トップページ）', './']], rel: ['research', 'philosophy'] },
+
+  { id: 'frontier', cat: 'ssh', chip: '理数フロンティアクラスって？',
+    keys: ['フロンティア', 'ふろんてぃあ', '理数', 'りすう'],
+    say: [
+      ['n', '2026年度に、高校の進学コースの中にできた新しいクラスだっぱ。自分で問いを立てて検証する探究活動に力を入れているっぱ。'],
+      ['p', '長期研究の「フロンティアラボ」と、12回の「インサイトジャーニー」（哲学シンキング、データサイエンス、つくばの研究所や大学の見学、茨城大学農学部でのインターンシップなど）で学びます。'],
+      ['n', '富士の青木ヶ原樹海でのフィールドワークや、川や海の水質を調べるサマーキャンプもあったっぱ！'] ],
+    links: [['FRONTIER BOOST PROGRAM', 'frontier.html'], ['理数フロンティアクラスの紹介サイト ↗', 'https://sites.google.com/toyo.jp/science-frontier?usp=sharing']], rel: ['lecture', 'course'] },
+
+  { id: 'research', cat: 'ssh', chip: 'どんな研究をしてるの？',
+    keys: ['研究', 'けんきゅう', '実績', 'じっせき', '受賞', 'じゅしょう', '賞', '発表', 'はっぴょう', 'ラボ', 'lab', 'sdgs', 'コンテスト', '大会'],
+    say: [
+      ['n', 'たとえば「SDGs Lab」では、外来植物ナガエツルノゲイトウにアンモニアの消臭効果があることを見つけたっぱ。Yahoo!ニュースやラジオでも紹介されたっぱ！'],
+      ['p', '大豆班は、ワインづくりで出る「ワインパミス」を使った循環型農業を研究していて、857件の応募の中から「IBARAKIドリーム・パスAWARD」のグランプリに選ばれました。『日経サイエンス』にも載りました。'],
+      ['n', '全国ユース環境活動発表大会では第3位。全国のSSH校が集まるSSH生徒研究発表会にも初めて参加したっぱ。'] ],
+    links: [['探究活動の様々な取り組み', 'activities.html'], ['SSH普及・発信活動', 'outreach.html']], rel: ['bunkei', 'lecture'] },
+
+  { id: 'lecture', cat: 'ssh', chip: 'どんな講座がある？',
+    keys: ['講座', 'こうざ', '講演', 'こうえん', '特別授業', 'イベント', 'いべんと', '体験', 'たいけん', 'steam', 'ロボット', 'ろぼっと', 'フィールドワーク', '合宿', 'がっしゅく', 'キャンプ'],
+    say: [
+      ['p', '大学や企業の方を招いた講座がたくさんあります。最近のものをいくつか紹介しますね。'],
+      ['n', '<ul><li>花王サイエンス探究講座（洗剤で界面活性剤の実験）</li><li>STEAM講座（農作物の色素を題材に、科学・技術・哲学・ビジネス）</li><li>遠隔ロボットワークショップ（学校から東京のロボットを動かす）</li><li>生成AI特別講座</li></ul>'],
+      ['p', '東洋大学の12学部で受けられる「Summer Academia」もありますよ。'] ],
+    links: [['探究活動の様々な取り組み', 'activities.html'], ['FRONTIER BOOST PROGRAM', 'frontier.html']], rel: ['univ', 'research'] },
+
+  { id: 'newsletter', cat: 'ssh', chip: 'SSHの様子をもっと見たい',
+    keys: ['様子', 'ようす', '通信', 'つうしん', 'logos', 'ロゴス', '動画', 'どうが', 'sns', 'インスタ', 'instagram', 'x', 'ツイッター', '写真', 'しゃしん', 'ニュース', 'にゅーす', '最新', 'さいしん'],
+    say: [
+      ['n', 'SSH特設サイトに、30秒でわかる紹介動画があるっぱ！ 活動の記録や、SSH通信「LOGOS Ushiku」も読めるっぱ。'],
+      ['p', '学校の公式Instagram（@toyo_ushiku_official）やXでも、行事や活動の様子を発信しています。'] ],
+    links: [['SSH特設サイト', './'], ['SSH通信 LOGOS Ushiku', 'logos.html']], rel: ['research', 'who'] },
+
+  // ───── コース・進路 ─────
+  { id: 'course', cat: 'school', chip: '高校のコースは？',
+    keys: ['コース', 'こーす', 'クラス', 'くらす', '高校', 'こうこう'],
+    say: [
+      ['n', '高校は5つのコースがあるっぱ。'],
+      ['n', '<ul><li><b>特別進学</b>：国公立・難関私立大学をめざす</li><li><b>グローバル</b>：英語と中国語、国内外の大学をめざす</li><li><b>進学</b>：東洋大学や4年制大学をめざす（理数フロンティアクラスもここ）</li><li><b>スポーツサイエンス</b>：全員が運動部の文武両道</li><li><b>中高一貫</b>：中学からの内部進学生</li></ul>'],
+      ['p', '気になるコースがあれば、名前で聞いてみてくださいね。'] ],
+    links: [['5つのコース（公式）↗', OFFICIAL + 'education_sh/cc/']], rel: ['tokushin', 'global', 'shingaku', 'sports'] },
+
+  { id: 'tokushin', cat: 'school', chip: '特別進学コースって？',
+    keys: ['特進コース', '特別進学コース', '特別進学', 'とくべつしんがく', '特進', 'とくしん', '国公立', 'こっこうりつ', '難関', 'なんかん'],
+    say: [
+      ['p', '国公立大学や私立4年制大学をめざすコースです。月曜から木曜は7時間授業で、1年生から模試を受けます。'],
+      ['n', '2年生の8月には、全員でオーストラリアの語学研修に行くっぱ！'] ],
+    links: [['5つのコース（公式）↗', OFFICIAL + 'education_sh/cc/']], rel: ['course', 'career'] },
+
+  { id: 'global', cat: 'school', chip: 'グローバルコースって？',
+    keys: ['グローバルコース', 'グローバル', 'ぐろーばる', '留学', 'りゅうがく', '中国語', 'ちゅうごくご', '海外', 'かいがい', '国際', 'こくさい', '英語で'],
+    say: [
+      ['n', '国内外の大学をめざすコースだっぱ。英語と中国語を学んで、ホームルームなどのクラスの活動も約9割が英語なんだっぱ！'],
+      ['p', '2026年度の入学生から、オーストラリアへの「ターム留学」が始まりました。入学してすぐの宿泊学習では、海外でのオリエンテーションも予定されています。'] ],
+    links: [['5つのコース（公式）↗', OFFICIAL + 'education_sh/cc/'], ['ターム留学の紹介 ↗', 'https://sites.google.com/toyo.jp/global-term?usp=sharing']], rel: ['english', 'course'] },
+
+  { id: 'shingaku', cat: 'school', chip: '進学コースって？',
+    keys: ['進学コース', 'しんがくこーす', '小テスト', 'しょうてすと'],
+    say: [
+      ['p', '東洋大学や4年制大学をめざすコースです。毎朝10分の小テストで、基礎をこつこつ積み上げます。3年生では選択科目もあります。'],
+      ['n', 'この進学コースの中に、SSHの中心になる「理数フロンティアクラス」があるっぱ！'] ],
+    links: [['5つのコース（公式）↗', OFFICIAL + 'education_sh/cc/']], rel: ['frontier', 'univ'] },
+
+  { id: 'sports', cat: 'school', chip: 'スポーツサイエンスコースって？',
+    keys: ['スポーツサイエンスコース', 'スポーツコース', 'スポーツサイエンス', 'すぽーつさいえんす', 'スポーツ', 'すぽーつ', '文武両道', 'ぶんぶりょうどう', 'アスリート'],
+    say: [
+      ['n', '文武両道をめざすコースで、クラス全員が運動部に入っているっぱ。'],
+      ['p', '大学の健康スポーツやスポーツマネジメント系の学部を見学する機会もあります。'] ],
+    links: [['5つのコース（公式）↗', OFFICIAL + 'education_sh/cc/']], rel: ['club', 'course'] },
+
+  { id: 'jhs', cat: 'school', chip: '中学校はどんなところ？',
+    keys: ['中高一貫コース', '中学', 'ちゅうがく', '中高一貫', 'ちゅうこういっかん', '一貫', 'いっかん', '6年', '六年', '小学生', 'しょうがくせい', '内部進学', 'グローバル探究'],
+    say: [
+      ['p', '中学校では「グローバル探究」という独自の時間があって、哲学・教養・国際理解・課題研究・キャリアを学びます。'],
+      ['n', '研修もたくさんあるっぱ！ 中1はホームルーム合宿とAll English Days、中2はフィリピン語学研修、中3はオーストラリア・アデレードで2週間のホームステイだっぱ。'],
+      ['p', '中学を卒業した人のほとんどが、そのまま附属の高校（中高一貫コース）に進んでいます。高2ではシンガポール研修もありますよ。'] ],
+    links: [['中学の特色ある教育（公式）↗', OFFICIAL + 'education_jh/speciality/']], rel: ['english', 'visit'] },
+
+  { id: 'english', cat: 'school', chip: '英語に力を入れてる？',
+    keys: ['英語', 'えいご', '英検', 'えいけん', 'gtec', 'toeic', '語学', 'ごがく', '研修', 'けんしゅう', 'ホームステイ', 'スピーキング'],
+    say: [
+      ['n', '入れているっぱ！ 中学では年5回のスピーキングテストがあって、卒業までに約9割弱が英検3級以上、半分以上が準2級以上をとっている年もあるっぱ。'],
+      ['p', 'フィリピン・オーストラリア・シンガポールの研修や、高校のグローバルコースのターム留学もあります。英語弁論大会で入賞した先輩もいますよ。'] ],
+    links: [['中学の特色ある教育（公式）↗', OFFICIAL + 'education_jh/speciality/']], rel: ['global', 'jhs'] },
+
+  { id: 'univ', cat: 'school', chip: '東洋大学に進める？',
+    keys: ['大学', 'だいがく', '東洋大', 'とうようだい', '附属', 'ふぞく', '推薦', 'すいせん', '内部', 'アカデミア', 'academia', '高大', '学部', 'がくぶ'],
+    say: [
+      ['p', '東洋大学の附属校なので「附属推薦」があります。例年、卒業生の4割以上がこの推薦で東洋大学に進んでいます。'],
+      ['n', '推薦の基準を満たせば、どのコースからでも使えるっぱ！ 3年間の成績・出席・人物などで総合的に判断されるっぱ。'],
+      ['p', '高校2年生の夏には「Summer Academia」で、東洋大学の4キャンパス・12学部の体験講座を受けられます。毎年100名以上が参加していますよ。'] ],
+    links: [['よくある質問（公式）↗', OFFICIAL + 'qa/index.html']], rel: ['career', 'lecture'] },
+
+  { id: 'career', cat: 'school', chip: '他の大学にも行ける？',
+    keys: ['筑波大学', '筑波大', '茨城大学', '国公立大学', 'ほかの大学', '他大', '進路', 'しんろ', '他大学', 'たのだいがく', '他の大学', '合格', 'ごうかく', '受験', '国立', 'こくりつ', '私立', 'しりつ', '就職', 'しゅうしょく', '将来', 'しょうらい'],
+    say: [
+      ['p', '行けます。特別進学コースは国公立大学や難関私立大学をめざしていますし、中高一貫コースからは筑波大学などの国公立大学に進んだ先輩もいます。'],
+      ['n', '補習や講習、TOEIC対策、1年生の大学キャンパス見学、2年生の学部説明会もあるっぱ。くわしい合格実績は公式サイトで見てほしいっぱ。'] ],
+    links: [['進路（公式）↗', OFFICIAL + 'cg_sh/index.html']], rel: ['univ', 'tokushin'] },
+
+  // ───── 学校生活 ─────
+  { id: 'club', cat: 'life', chip: '部活は？',
+    keys: ['部活', 'ぶかつ', '部', 'クラブ', 'くらぶ', '運動部', 'うんどうぶ', '文化部', 'ぶんかぶ', '同好会', 'どうこうかい', '野球', 'やきゅう', '相撲', 'すもう', '陸上', 'りくじょう', '駅伝', 'えきでん', 'サッカー', 'さっかー', 'ラグビー', 'らぐびー', 'バレー', 'ばれー', 'バスケ', 'ばすけ', 'テニス', 'てにす', 'バドミントン', '卓球', 'たっきゅう', 'レスリング', '剣道', 'けんどう', '弓道', 'きゅうどう', '空手', 'からて', 'ダンス', 'だんす', '吹奏楽', 'すいそうがく', '軽音', 'けいおん', '和楽', '写真部', '歴史', '文芸', '茶道', 'さどう', '華道', 'かどう', '美術', 'びじゅつ', '演劇', 'えんげき', '調理', 'ちょうり', '英語部', '囲碁', 'いご', '将棋', 'しょうぎ', '落語', 'らくご', '書道', 'しょどう', '科学部', '数理'],
+    say: [
+      ['p', '高校生の約65%が、約40の部活動に入っています。中学生と一緒に活動する部もありますよ。'],
+      ['n', '<b>運動部</b>：硬式野球、相撲、陸上競技・駅伝、サッカー、ラグビー、バレーボール（男女）、バスケットボール（男女）、硬式テニス（男女）、バドミントン、卓球、レスリング、剣道、弓道、空手道、ダンス'],
+      ['n', '<b>文化部</b>：吹奏楽研究、軽音楽研究、和楽、写真、歴史、文芸、茶道、華道、美術、演劇、調理研究、英語、囲碁将棋<br><b>同好会</b>：落語、書道、科学、数理研究'],
+      ['p', '練習日や雰囲気は、見学会で先輩に聞いてみるのがいちばんです。'] ],
+    links: [['部活動（公式）↗', OFFICIAL + 'sl_sh/club/']], rel: ['sports', 'schedule'] },
+
+  { id: 'bus', cat: 'life', chip: 'スクールバスは？',
+    keys: ['スクールバス', 'すくーるばす', 'バス', 'ばす', 'ルート', 'るーと', 'つくば', '守谷', 'もりや', 'みらい', '竜ケ崎', '龍ケ崎', 'りゅうがさき', '阿見', 'あみ', '稲敷', 'いなしき', '千葉', 'ちば', 'tx', '遠い', 'とおい', '通える', 'かよえる'],
+    say: [
+      ['n', 'スクールバスは全部で10ルートあって、中高合わせて4割強の人が使っているっぱ！'],
+      ['n', '牛久駅東口のほか、守谷・つくばみらい・TX沿線（みどりの、みらい平など）・つくば中央・つくば東・阿見・稲敷・千葉ニュータウン・竜ケ崎の方面から出ているっぱ。'],
+      ['p', '乗り場や時刻は年度で変わることがあるので、公式サイトの時刻表を見てくださいね。'] ],
+    links: [['スクールバス（公式）↗', OFFICIAL + 'sl_sh/bus/']], rel: ['access', 'bike'] },
+
+  { id: 'access', cat: 'life', chip: '学校の場所は？',
+    keys: ['場所', 'ばしょ', '住所', 'じゅうしょ', 'アクセス', 'あくせす', '駅', 'えき', '牛久駅', 'うしくえき', '電車', 'でんしゃ', '徒歩', 'とほ', '歩いて', 'どこ', 'かっぱ号', '路線バス'],
+    say: [
+      ['p', '住所は、茨城県牛久市柏田町1360-2です。いちばん近い駅はJR常磐線の牛久駅（東口）です。'],
+      ['n', '牛久駅東口から、路線バス（かっぱ号や関東鉄道バス）で約10分、「東洋高校入口」で降りるっぱ。歩くと約25分だっぱ。'],
+      ['p', 'スクールバスもありますよ。'] ],
+    links: [['アクセス（公式）↗', OFFICIAL + 'access/']], rel: ['bus', 'bike'] },
+
+  { id: 'bike', cat: 'life', chip: '自転車で通える？',
+    keys: ['自転車', 'じてんしゃ', 'チャリ', 'ちゃり'],
+    say: [
+      ['n', '自転車通学は、原則として許可制だっぱ。家から自転車で通えるっぱ。'],
+      ['p', '高校では、平日の夕方まで活動する部活に正式に入っている人は、JR牛久駅から自転車で通うこともできます。くわしくは公式サイトの「よくある質問」を見てくださいね。'] ],
+    links: [['よくある質問（公式）↗', OFFICIAL + 'qa/index.html']], rel: ['bus', 'access'] },
+
+  { id: 'uniform', cat: 'life', chip: '制服はどんな感じ？',
+    keys: ['制服', 'せいふく', 'ブレザー', 'ぶれざー', 'スカート', 'ズボン', 'パンツ', 'ネクタイ', 'リボン', 'セーター', 'カーディガン', 'コムサ', 'おしゃれ', 'かわいい', 'かっこいい'],
+    say: [
+      ['p', '高校の制服は、ファッションブランド「コムサ（COMME CA）」のスクールレーベルのデザインです。濃紺のブレザーに、淡いラベンダーのシャツ、ストライプのネクタイです。'],
+      ['n', 'シャツ・セーター・カーディガンを組み合わせて、日によって自由にコーディネートできるっぱ。女子はパンツスタイルも選べるっぱ！'] ],
+    links: [['制服（公式）↗', OFFICIAL + 'sl_sh/wear/']], rel: ['lunch', 'events'] },
+
+  { id: 'lunch', cat: 'life', chip: 'お昼ごはん・学食は？',
+    keys: ['学食', 'がくしょく', '食堂', 'しょくどう', 'お昼', 'おひる', '昼食', 'ちゅうしょく', 'ランチ', 'らんち', '弁当', 'べんとう', 'ごはん', 'ご飯', 'メニュー', 'めにゅー', '購買', 'こうばい', 'パン'],
+    say: [
+      ['n', '日差しの入る明るい学食があるっぱ！ オムライス、タコライス、焼肉丼、ラーメン、日替わりランチ、トッピングカレー、たこ焼き、からあげ棒……おいしそうだっぱ。'],
+      ['p', '高校生は食堂で定食などを買えて、食堂の購買ではお弁当やパンも売っています。中学生はクラスでお弁当を食べます（持ってくるか、食堂に注文）。土曜日と考査期間は、中学生も学食を使えます。'] ],
+    links: [['学食（公式）↗', OFFICIAL + 'sl_sh/cafeteria/']], rel: ['schedule', 'uniform'] },
+
+  { id: 'events', cat: 'life', chip: 'どんな行事がある？',
+    keys: ['行事', 'ぎょうじ', '文化祭', 'ぶんかさい', '創造祭', 'そうぞうさい', '体育祭', 'たいいくさい', 'スポーツフェスティバル', '修学旅行', 'しゅうがくりょこう', 'イベント', '楽しい', 'たのしい'],
+    say: [
+      ['n', '9月には2日間の文化祭「創造祭」があるっぱ！ 飲食の模擬店やステージ発表、英語落語もあるっぱ。'],
+      ['p', 'クラス対抗の「スポーツフェスティバル」も2日間あって、ソフトボール・バスケットボール・サッカー・バレーボール・リレーで競います。'],
+      ['n', '中学の語学研修や、高校の海外研修も楽しみな行事だっぱ。'] ],
+    links: [['年間行事（公式）↗', OFFICIAL + 'sl_sh/annualevents/']], rel: ['club', 'english'] },
+
+  { id: 'schedule', cat: 'life', chip: '1日の流れは？',
+    keys: ['1日', '一日', 'いちにち', '時間割', 'じかんわり', '何時', 'なんじ', '登校', 'とうこう', '下校', 'げこう', '土曜', 'どよう', '授業時間', '朝', 'あさ', '放課後', 'ほうかご', '3学期', '学期'],
+    say: [
+      ['p', '朝のホームルームは8時35分から。お昼休みは12時45分から13時30分までです。'],
+      ['n', '部活は18時まで、完全下校は18時30分（土曜は17時30分）だっぱ。土曜日も授業があって、中学は4時間目（12時45分）、高校は3時間目（11時45分）までだっぱ。'],
+      ['p', '2024年度から3学期制です。'] ],
+    links: [['よくある質問（公式）↗', OFFICIAL + 'qa/index.html']], rel: ['lunch', 'club'] },
+
+  { id: 'phone', cat: 'life', chip: 'スマホは持って行ける？',
+    keys: ['スマホ', 'すまほ', '携帯', 'けいたい', '電話', 'iphone', 'ケータイ'],
+    say: [
+      ['n', '中学は許可制で、持ってきたスマホは担任の先生が預かるっぱ。校内で使えるのは職員室の中だけだっぱ。'],
+      ['p', '高校は持ってきてかまいません。授業で使うこともありますが、許可なく使うのは禁止です。'] ],
+    links: [['よくある質問（公式）↗', OFFICIAL + 'qa/index.html']], rel: ['schedule', 'counsel'] },
+
+  { id: 'counsel', cat: 'life', chip: '困ったときに相談できる？',
+    keys: ['相談', 'そうだん', '悩み', 'なやみ', 'カウンセ', 'かうんせ', 'ピアルーム', '不安', 'ふあん', '友達', 'ともだち', 'いじめ', '保健室'],
+    say: [
+      ['p', 'できます。相談室の「ピアルーム」には、臨床心理士のスクールカウンセラーが週2日いて、話を聞いてくれます。'],
+      ['n', 'ひとりでかかえこまないでほしいっぱ。担任の先生にも、いつでも相談していいっぱ。'] ],
+    links: [['よくある質問（公式）↗', OFFICIAL + 'qa/index.html']], rel: ['schedule', 'phone'] },
+
+  { id: 'spirit', cat: 'life', chip: '学校の考え方は？',
+    keys: ['考え方', 'かんがえかた', '建学', '理念', 'りねん', '精神', 'せいしん', '井上円了', 'いのうえ', '歴史', 'れきし', 'モットー', '校風', 'こうふう', '雰囲気', 'ふんいき', '創立', '開校'],
+    say: [
+      ['p', '東洋大学をつくった井上円了先生の言葉「諸学の基礎は哲学にあり」が、学校の土台です。わたしの名前も「フィロソフィア（哲学）」から来ているんですよ。'],
+      ['n', '「独立自活」「知徳兼全」も合わせた建学の精神をもとに、深く考える力と、地球規模で考えられる人を育てているっぱ。学校ができたのは1964年だっぱ。'] ],
+    links: [['学校紹介（公式）↗', OFFICIAL + 'introduction/index.html']], rel: ['philosophy', 'ssh'] },
+
+  // ───── 見学・入試 ─────
+  { id: 'visit', cat: 'visit', chip: '学校見学したい',
+    keys: ['見学', 'けんがく', '説明会', 'せつめいかい', 'オープン', 'おーぷん', '行きたい', 'いきたい', '訪問', '申し込み', '申込', 'もうしこみ', '予約', 'よやく', 'プレテスト'],
+    say: [
+      ['p', 'ぜひ来てください！ 見学会や説明会は、事前の申し込みが必要です。'],
+      ['n', '日程と申し込みは、学校公式サイトの「入試情報」にあるっぱ。都合が合わないときは、個別の見学も相談できるっぱ。'] ],
+    links: [['中学の入試イベント（公式）↗', OFFICIAL + 'adinfo_jh/adbriefing/'], ['高校の入試情報（公式）↗', OFFICIAL + 'adinfo_sh/']], rel: ['contact', 'exam'] },
+
+  { id: 'exam', cat: 'visit', chip: '入試・学費は？',
+    keys: ['入試', 'にゅうし', '試験', 'しけん', '学費', 'がくひ', 'お金', 'おかね', '授業料', 'じゅぎょうりょう', '奨学', 'しょうがく', '偏差値', 'へんさち', '倍率', 'ばいりつ', '費用', 'ひよう', 'いくら', '特待'],
+    say: [
+      ['n', '入試や学費は、毎年変わることがある大事な情報だっぱ。ぼくたちが答えてまちがえるといけないので……'],
+      ['p', '必ず学校公式サイトの入試情報で確かめてください。わからないことは、説明会で先生に直接聞くのがいちばん確実です。'] ],
+    links: [['中学の入試情報（公式）↗', OFFICIAL + 'adinfo_jh/'], ['高校の入試情報（公式）↗', OFFICIAL + 'adinfo_sh/'], ['よくある質問（公式）↗', OFFICIAL + 'qa/index.html']], rel: ['visit', 'contact'] },
+
+  { id: 'contact', cat: 'visit', chip: '学校に問い合わせたい',
+    keys: ['問い合わせ', '問合せ', 'といあわせ', '連絡', 'れんらく', '電話番号', 'メール', 'めーる', '聞きたい', 'ききたい', '先生に'],
+    say: [
+      ['p', '入試広報の先生が相談にのってくれます。'],
+      ['n', '電話は 029-872-0350、メールは kouhou@toyo-ushiku.ed.jp だっぱ。個別の見学や相談もここにお願いするっぱ。'] ],
+    links: [['よくある質問（公式）↗', OFFICIAL + 'qa/index.html']], rel: ['visit', 'exam'] },
+
+  { id: 'who', cat: 'ssh', chip: '2人はだれ？',
+    keys: ['だれ', '誰', 'フィロ', 'ふぃろ', 'ぬまっぱ', 'カッパ', 'かっぱ', 'フクロウ', 'ふくろう', 'キャラ', 'きゃら', '名前', 'なまえ', 'あなた', 'きみ', '君'],
+    say: [
+      ['p', 'わたしはフクロウのフィロです。図書館の窓辺にすんでいて、「なぜ？」と問いを立てる係です。'],
+      ['n', 'ぼくは牛久沼のカッパ、ぬまっぱ博士だっぱ！ 頭のお皿のセンサーで測って、データで確かめる係だっぱ。'],
+      ['p', '2人で「問う・確かめる・伝える」を案内しています。どうぞよろしくだホー！'] ],
+    links: [['キャラクター紹介', 'characters.html']], rel: ['ssh', 'philosophy'] },
+];
+
+const BY_ID = Object.fromEntries(QA.map(q => [q.id, q]));
+const GREET = [
+  ['p', 'こんにちは。わたしはフィロです。東洋大牛久のことを案内します。'],
+  ['n', 'ぼくはぬまっぱ博士だっぱ！ 下のボタンを押すか、質問を書いて「聞く」を押してね。'] ];
+const HELLO_KEYS = ['こんにちは', 'こんばんは', 'おはよう', 'はじめまして', 'やあ', 'hello', 'hi'];
+const THANKS_KEYS = ['ありがとう', 'ありがと', 'サンキュー', 'thanks', 'わかった', '了解'];
+const BYE_KEYS = ['さようなら', 'さよなら', 'バイバイ', 'ばいばい', 'またね'];
+
+const NAMES = { p: 'フィロ', n: 'ぬまっぱ博士' };
+const FACES = { p: 'assets/chara/philo.webp', n: 'assets/chara/numappa.webp' };
+const log = document.getElementById('log');
+const scroller = document.getElementById('scroll');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// カタカナ→ひらがな、全角英数→半角、小文字化、空白と記号を除く
+function norm(s) {
+  return s.normalize('NFKC').toLowerCase()
+    .replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60))
+    .replace(/[\s、。！？!?・「」（）()]/g, '');
+}
+// 英字だけのキーワード（x, ai など）は単語として一致したときだけ数える
+function hit(t, raw, k) {
+  if (/^[a-z]+$/.test(k)) return new RegExp(`(^|[^a-z])${k}([^a-z]|$)`).test(raw);
+  return t.includes(k);
+}
+function find(text) {
+  const t = norm(text), raw = text.normalize('NFKC').toLowerCase();
+  let best = null, score = 0;
+  for (const qa of QA) {
+    let s = 0;
+    for (const k of qa.keys) { const nk = norm(k); if (hit(t, raw, nk)) s += nk.length; }
+    if (s > score) { score = s; best = qa; }
+  }
+  return best;
+}
+// 答えられないとき：文字の並び（2文字ずつ）が近い質問を3つまで出す
+function bigrams(s) { const b = new Set(); for (let i = 0; i < s.length - 1; i++) b.add(s.slice(i, i + 2)); return b; }
+function suggest(text) {
+  const g = bigrams(norm(text));
+  const scored = QA.map(qa => {
+    const h = bigrams(norm(qa.chip + qa.keys.join('')));
+    let s = 0; g.forEach(x => { if (h.has(x)) s++; });
+    return [s, qa.id];
+  }).filter(([s]) => s > 0).sort((a, b) => b[0] - a[0]).slice(0, 3).map(([, id]) => id);
+  return scored.length ? scored : ['ssh', 'course', 'club'];
+}
+
+function bottom() { scroller.scrollTo({ top: scroller.scrollHeight, behavior: reduce ? 'auto' : 'smooth' }); }
+function esc(s) { return s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]); }
+
+function addUser(text) {
+  const d = document.createElement('div');
+  d.className = 'msg user';
+  d.innerHTML = `<div class="body"><div class="bubble">${esc(text)}</div></div>`;
+  log.appendChild(d); bottom();
+}
+function addChara(who, html, links, sugg, label) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + (who === 'p' ? 'philo' : 'numa');
+  const ls = links ? `<div class="links">${links.map(([t, u]) =>
+    `<a href="${u}"${u.startsWith('http') ? ' target="_blank" rel="noopener"' : ''}>${t}</a>`).join('')}</div>` : '';
+  const sg = sugg && sugg.length ? `<p class="sugg-label">${label || 'こんな質問もあるよ'}</p><div class="sugg">${sugg.map(id =>
+    `<button type="button" data-id="${id}">${BY_ID[id].chip}</button>`).join('')}</div>` : '';
+  d.innerHTML = `<div class="face"><img src="${FACES[who]}" alt=""></div>
+    <div class="body"><p class="who">${NAMES[who]}</p><div class="bubble">${html}${ls}${sg}</div></div>`;
+  d.querySelectorAll('.sugg button').forEach(b => b.addEventListener('click', () => ask(BY_ID[b.dataset.id].chip)));
+  log.appendChild(d); bottom();
+}
+function typing(who) {
+  const d = document.createElement('div');
+  d.className = 'msg typing ' + (who === 'p' ? 'philo' : 'numa');
+  d.innerHTML = `<div class="face"><img src="${FACES[who]}" alt=""></div><div class="body"><div class="bubble">…</div></div>`;
+  log.appendChild(d); bottom();
+  return d;
+}
+
+let busy = Promise.resolve();
+const wait = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+function play(lines, links, sugg, label) {
+  busy = busy.then(async () => {
+    for (let i = 0; i < lines.length; i++) {
+      const [who, html] = lines[i];
+      const t = typing(who);
+      await wait(Math.min(1400, 350 + html.length * 10));
+      t.remove();
+      const last = i === lines.length - 1;
+      addChara(who, html, last ? links : null, last ? sugg : null, label);
+      await wait(250);
+    }
+  });
+}
+function ask(text) {
+  text = text.trim();
+  if (!text) return;
+  addUser(text);
+  const t = norm(text);
+  const qa = find(text);
+  if (qa) return play(qa.say, qa.links, qa.rel);
+  if (THANKS_KEYS.some(k => t.includes(norm(k))))
+    return play([['p', 'どういたしまして。いい問いをありがとうございました、ホー！'], ['n', 'ほかにも気になることがあったら聞いてね！']], null, ['visit', 'contact']);
+  if (BYE_KEYS.some(k => t.includes(norm(k))))
+    return play([['n', 'またね！ 見学会で会えるのを楽しみにしてるっぱ！'], ['p', 'お待ちしていますね。']]);
+  if (HELLO_KEYS.some(k => t.includes(norm(k)))) return play(GREET, null, ['ssh', 'course', 'club']);
+  play([
+    ['p', 'うーん、その質問にはまだ答えを用意できていません。なぜ、なぜ、なぜ……。'],
+    ['n', '近そうな質問を選んでみてほしいっぱ。くわしいことは、学校公式サイトか説明会で先生に聞いてみてね！'] ],
+    [['よくある質問（公式）↗', OFFICIAL + 'qa/index.html']], suggest(text), 'もしかして、これのこと？');
+}
+
+// 分類タブと質問ボタン
+const tabs = document.getElementById('tabs');
+const chips = document.getElementById('chips');
+function showCat(cat) {
+  tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', b.dataset.cat === cat));
+  chips.innerHTML = '';
+  for (const qa of QA.filter(q => q.cat === cat)) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = qa.chip;
+    b.addEventListener('click', () => ask(qa.chip));
+    chips.appendChild(b);
+  }
+  chips.scrollLeft = 0;
+}
+for (const [cat, label] of CATS) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.role = 'tab'; b.dataset.cat = cat;
+  b.textContent = label;
+  b.addEventListener('click', () => showCat(cat));
+  tabs.appendChild(b);
+}
+showCat('ssh');
+document.getElementById('ask').addEventListener('submit', e => {
+  e.preventDefault();
+  const q = document.getElementById('q');
+  ask(q.value); q.value = '';
+});
+play(GREET);
+</script>
+</body>
+</html>
